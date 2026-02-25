@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "prepare:assets": "node scripts/prepare-assets.mjs",
-    "predev": "npm.cmd run prepare:assets",
-    "prebuild": "npm.cmd run prepare:assets",
-    "prelint": "npm.cmd run prepare:assets",
+    "predev": "npm run prepare:assets",
+    "prebuild": "npm run prepare:assets",
+    "prelint": "npm run prepare:assets",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
