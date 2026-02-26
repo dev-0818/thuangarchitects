@@ -24,10 +24,12 @@ const CATEGORY_SOURCES = [
 
 const SIZES = [600, 1200, 1920];
 const LOGO_FILES = {
-  wordmarkDark: "Logo Export-21.png",
-  wordmarkLight: "Logo Export-24.png",
-  markDark: "Logo Export-33.png",
-  markAccent: "Logo Export-32.png"
+  navDefault: "bgwhitenew.png",
+  navInnerDefault: "Logo Export-27.png",
+  navHover: "Logo Export-26.png",
+  homeLogoA: "Logo Export-28.png",
+  homeLogoB: "Logo Export-29.png",
+  homeLogoC: "Logo Export-30.png"
 };
 
 const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
@@ -267,6 +269,7 @@ const prepareProjects = async () => {
         const image = {
           id: imageKey,
           alt: `${toTitle(projectName)} architectural image ${index + 1}`,
+          orientation: "landscape",
           sources: {
             w600,
             w1200,
@@ -280,6 +283,7 @@ const prepareProjects = async () => {
         const dimensions = dimensionSource ? await readWebpDimensions(dimensionSource) : null;
 
         if (dimensions?.width && dimensions?.height) {
+          image.orientation = dimensions.height > dimensions.width ? "portrait" : "landscape";
           const ratio = dimensions.width / dimensions.height;
           fallbackCoverCandidates.push({
             image,

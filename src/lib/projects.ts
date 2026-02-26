@@ -11,6 +11,7 @@ export type ResponsiveSources = {
 export type ProjectImage = {
   id: string;
   alt: string;
+  orientation: "landscape" | "portrait";
   sources: ResponsiveSources;
 };
 
@@ -27,10 +28,12 @@ export type Project = {
 type Manifest = {
   generatedAt: string;
   logos: {
-    wordmarkDark: string;
-    wordmarkLight: string;
-    markDark: string;
-    markAccent: string;
+    navDefault: string;
+    navInnerDefault: string;
+    navHover: string;
+    homeLogoA: string;
+    homeLogoB: string;
+    homeLogoC: string;
   };
   projects: Project[];
 };
@@ -88,4 +91,3 @@ export const getAdjacentProjects = (category: ProjectCategory, slug: string) => 
     next: projects[currentIndex + 1] ?? null
   };
 };
-

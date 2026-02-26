@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { HeroSlideshow } from "@/components/hero-slideshow";
-import { getAllProjects, getFeaturedProject } from "@/lib/projects";
+import { HomeHero } from "@/components/home-hero";
+import { getAllProjects, getBrandAssets, getFeaturedProject } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -12,9 +11,16 @@ export const metadata = buildMetadata({
 
 export default function HomePage() {
   const featured = getFeaturedProject();
-  const slides = getAllProjects()
+  const brandAssets = getBrandAssets();
+  const projects = getAllProjects();
+  const slides = projects
     .slice(0, 10)
     .map((project) => project.cover);
+  const mobilePortraitSlides = projects
+    .flatMap((project) => project.images)
+    .filter((image) => image.orientation === "portrait")
+    .slice(0, 10)
+    .map((image) => image.sources.w1200);
 
   if (!featured) {
     return (
@@ -26,24 +32,13 @@ export default function HomePage() {
 
   return (
     <div className="page-main hero-main">
-      <section className="home-hero" aria-label="Featured project">
-        <HeroSlideshow slides={slides} />
-        <div className="home-overlay">
-          <h1>Thuang - Architect</h1>
-          <p>
-            Minimalist architecture for private and commercial spaces, balancing proportion,
-            material integrity, and timeless calm.
-          </p>
-          <div className="home-actions">
-            <Link className="button-link" href="/portfolio/">
-              Explore Portfolio
-            </Link>
-            <Link className="button-link" href={`/portfolio/${featured.category}/${featured.slug}/`}>
-              View {featured.name}
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HomeHero
+        slides={slides}
+        mobilePortraitSlides={mobilePortraitSlides}
+        featuredName={featured.name}
+        featuredHref={`/portfolio/${featured.category}/${featured.slug}/`}
+        homeLogo={brandAssets.homeLogoB}
+      />
     </div>
   );
 }

@@ -61,7 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="site-wrapper">
           <header className="site-header">
             <div className="header-inner">
-              <BrandMark tone="dark" />
+              <BrandMark />
               <SiteNav tone="dark" />
             </div>
           </header>

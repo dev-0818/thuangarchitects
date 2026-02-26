@@ -87,46 +87,39 @@ a:hover {
 }
 
 .brand-mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
+  display: inline-block;
   min-width: 0;
   flex-shrink: 0;
+  line-height: 0;
 }
 
-.brand-icon {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  flex-shrink: 0;
+.brand-logo-shell {
+  position: relative;
+  display: block;
+  width: min(105px, 14vw);
 }
 
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.08rem;
-  line-height: 1;
+.brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.25s ease;
 }
 
-.brand-text-main {
-  font-family: "Bodoni Moda", "Palatino Linotype", Georgia, serif;
-  font-size: 0.82rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink);
-  transition: color 0.25s ease, text-shadow 0.25s ease;
+.brand-logo-hover {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
 }
 
-.brand-text-sub {
-  font-size: 0.48rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--muted);
+.brand-mark:hover .brand-logo-default,
+.brand-mark:focus-visible .brand-logo-default {
+  opacity: 0;
 }
 
-.brand-tone-light .brand-text-main,
-.brand-tone-light .brand-text-sub {
-  color: #ffffff;
+.brand-mark:hover .brand-logo-hover,
+.brand-mark:focus-visible .brand-logo-hover {
+  opacity: 1;
 }
 
 .site-nav ul {
@@ -152,10 +145,6 @@ a:hover {
   color: var(--accent);
 }
 
-.brand-mark:hover .brand-text-main {
-  color: var(--accent);
-}
-
 body:has(.hero-main) .site-nav a {
   color: rgba(255, 255, 255, 0.96);
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
@@ -167,14 +156,8 @@ body:has(.hero-main) .site-nav a:focus-visible {
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
 }
 
-body:has(.hero-main) .brand-text-main,
-body:has(.hero-main) .brand-text-sub {
-  color: #ffffff;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
-}
-
-body:has(.hero-main) .brand-icon {
-  filter: brightness(0) invert(1) drop-shadow(0 1px 10px rgba(0, 0, 0, 0.45));
+body:has(.hero-main) .brand-logo {
+  filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.42));
 }
 
 .page-main {
@@ -238,6 +221,9 @@ body:has(.hero-main) .brand-icon {
 
 .home-hero-media img {
   object-fit: cover;
+  object-position: center center;
+  aspect-ratio: auto;
+  image-rendering: auto;
 }
 
 .home-slide {
@@ -267,12 +253,12 @@ body:has(.hero-main) .brand-icon {
   padding: 2rem;
 }
 
-.home-overlay h1 {
-  margin: 0;
-  font-family: "Bodoni Moda", "Palatino Linotype", Georgia, serif;
-  text-transform: uppercase;
-  font-size: clamp(1.5rem, 3.4vw, 3.2rem);
-  letter-spacing: 0.08em;
+.home-brand-logo {
+  width: clamp(160px, 38vw, 460px);
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 0.8rem;
+  filter: drop-shadow(0 3px 14px rgba(0, 0, 0, 0.28));
 }
 
 .home-overlay p {
@@ -579,6 +565,10 @@ body:has(.hero-main) .brand-icon {
     padding-inline: 0.9rem;
   }
 
+  .brand-logo-shell {
+    width: min(78px, 26vw);
+  }
+
   .site-nav ul {
     gap: 0.75rem;
   }
@@ -596,20 +586,20 @@ body:has(.hero-main) .brand-icon {
     padding: 1.3rem;
   }
 
+  .home-hero-media img {
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .home-brand-logo {
+    width: clamp(140px, 56vw, 320px);
+  }
+
   .home-overlay .home-actions {
     flex-wrap: wrap;
   }
 
-  .brand-text-main {
-    font-size: 0.68rem;
-    letter-spacing: 0.14em;
-  }
-
   .project-gallery-item {
     width: 100%;
-  }
-
-  .brand-text-sub {
-    display: none;
   }
 }

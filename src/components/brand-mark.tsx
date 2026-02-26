@@ -1,22 +1,25 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { getBrandAssets } from "@/lib/projects";
 
 type BrandMarkProps = {
-  tone?: "dark" | "light";
   className?: string;
 };
 
-export const BrandMark = ({ tone = "dark", className = "" }: BrandMarkProps) => {
+export const BrandMark = ({ className = "" }: BrandMarkProps) => {
   const logos = getBrandAssets();
-  const mark = tone === "light" ? logos.markAccent : logos.markDark;
-  const toneClass = tone === "light" ? "brand-tone-light" : "brand-tone-dark";
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+  const defaultLogo = isHomePage ? logos.navDefault : logos.navInnerDefault;
+  const hoverLogo = isHomePage ? logos.navDefault : logos.navHover;
 
   return (
-    <Link className={`brand-mark ${toneClass} ${className}`.trim()} href="/" aria-label="Thuang Architect home">
-      <img src={mark} alt="" aria-hidden="true" className="brand-icon" />
-      <span className="brand-text" aria-hidden="true">
-        <span className="brand-text-main">Thuang</span>
-        <span className="brand-text-sub">Architect</span>
+    <Link className={`brand-mark ${className}`.trim()} href="/" aria-label="Thuang Architect home">
+      <span className="brand-logo-shell" aria-hidden="true">
+        <img src={defaultLogo} alt="" className="brand-logo brand-logo-default" />
+        <img src={hoverLogo} alt="" className="brand-logo brand-logo-hover" />
       </span>
     </Link>
   );
