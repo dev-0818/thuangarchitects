@@ -13,7 +13,7 @@ export const BrandMark = ({ className = "" }: BrandMarkProps) => {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const defaultLogo = isHomePage ? logos.navDefault : logos.navInnerDefault;
-  const hoverLogo = isHomePage ? logos.navDefault : logos.navHover;
+  const hoverLogo = logos.navHover;
 
   return (
     <Link className={`brand-mark ${className}`.trim()} href="/" aria-label="Thuang Architect home">

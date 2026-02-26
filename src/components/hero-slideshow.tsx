@@ -45,7 +45,9 @@ export const HeroSlideshow = ({
     <div className="home-hero-media" aria-hidden="true">
       {normalizedSlides.map((slide, index) => {
         const mobileSlideSource =
-          normalizedMobileSlides.length > 0
+          index === 0
+            ? slide.sources.w1920
+            : normalizedMobileSlides.length > 0
             ? normalizedMobileSlides[index % normalizedMobileSlides.length]
             : slide.sources.w1920;
 
@@ -55,7 +57,7 @@ export const HeroSlideshow = ({
             className={`home-slide ${index === activeIndex ? "is-active" : ""}`}
           >
             <source media="(max-width: 820px)" srcSet={mobileSlideSource} />
-            <source media="(max-width: 1280px)" srcSet={slide.sources.w1200} />
+            <source media="(max-width: 1280px)" srcSet={slide.sources.w1920} />
             <img
               src={slide.sources.w1920}
               alt={slide.alt}

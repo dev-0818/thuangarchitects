@@ -1,5 +1,6 @@
 import { HomeHero } from "@/components/home-hero";
-import { getAllProjects, getBrandAssets, getFeaturedProject } from "@/lib/projects";
+import { getAllProjects, getBrandAssets } from "@/lib/projects";
+import type { ProjectImage } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -10,19 +11,41 @@ export const metadata = buildMetadata({
 });
 
 export default function HomePage() {
-  const featured = getFeaturedProject();
   const brandAssets = getBrandAssets();
   const projects = getAllProjects();
-  const slides = projects
-    .slice(0, 10)
-    .map((project) => project.cover);
-  const mobilePortraitSlides = projects
-    .flatMap((project) => project.images)
-    .filter((image) => image.orientation === "portrait")
-    .slice(0, 10)
-    .map((image) => image.sources.w1200);
+  const homepageProjects = projects.filter((project) => project.slug !== "brastagi");
+  const excludedHomeImages = new Set([
+    "/images/komersial/gudang-mmtc/01-mmtc-1-1920.webp",
+    "/images/residential/cemara-hijau/03-ch-3-1920.webp"
+  ]);
+  const lexingtonProject = homepageProjects.find((project) => project.slug === "lexington");
+  const lexingtonLeadImage =
+    lexingtonProject?.images.find((image) => image.sources.w1920.endsWith("/08-lxt-8-1920.webp")) ??
+    lexingtonProject?.images[7] ??
+    null;
 
-  if (!featured) {
+  const slides = homepageProjects
+    .map((project) => project.cover)
+    .filter(
+      (slide) =>
+        slide.sources.w1920 !== lexingtonLeadImage?.sources.w1920 &&
+        !excludedHomeImages.has(slide.sources.w1920)
+    )
+    .slice(0, 10);
+
+  const heroSlides = [lexingtonLeadImage, ...slides].filter(
+    (slide): slide is ProjectImage => Boolean(slide)
+  );
+
+  const mobilePortraitSlides = homepageProjects
+    .flatMap((project) => project.images)
+    .filter(
+      (image) => image.orientation === "portrait" && !excludedHomeImages.has(image.sources.w1920)
+    )
+    .slice(0, 10)
+    .map((image) => image.sources.w1920);
+
+  if (!lexingtonProject || heroSlides.length === 0) {
     return (
       <div className="page-main">
         <p>No project images are available yet.</p>
@@ -33,10 +56,10 @@ export default function HomePage() {
   return (
     <div className="page-main hero-main">
       <HomeHero
-        slides={slides}
+        slides={heroSlides}
         mobilePortraitSlides={mobilePortraitSlides}
-        featuredName={featured.name}
-        featuredHref={`/portfolio/${featured.category}/${featured.slug}/`}
+        featuredName={lexingtonProject.name}
+        featuredHref={`/portfolio/${lexingtonProject.category}/${lexingtonProject.slug}/`}
         homeLogo={brandAssets.homeLogoB}
       />
     </div>
