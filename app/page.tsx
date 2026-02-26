@@ -4,7 +4,7 @@ import type { ProjectImage } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "Quiet Luxury Architecture",
+  title: "THUANGARCHITECT",
   description:
     "A curated portfolio of residential and commercial architecture shaped by minimal forms, crafted materials, and controlled light.",
   path: "/"

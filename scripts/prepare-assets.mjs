@@ -6,6 +6,7 @@ const IMAGES_ROOT = path.join(ROOT, "Images");
 const PUBLIC_ROOT = path.join(ROOT, "public");
 const OUTPUT_IMAGES_ROOT = path.join(PUBLIC_ROOT, "images");
 const OUTPUT_LOGOS_ROOT = path.join(PUBLIC_ROOT, "logos");
+const OUTPUT_FAVICON_PATH = path.join(PUBLIC_ROOT, "favicon.png");
 const GENERATED_ROOT = path.join(ROOT, "src", "generated");
 const MANIFEST_PATH = path.join(GENERATED_ROOT, "projects-manifest.json");
 
@@ -31,6 +32,7 @@ const LOGO_FILES = {
   homeLogoB: "Logo Export-29.png",
   homeLogoC: "Logo Export-30.png"
 };
+const FAVICON_FILE = "Logo Export-35.png";
 
 const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
 const TARGET_LANDSCAPE_RATIO = 16 / 10;
@@ -128,6 +130,9 @@ const prepareLogos = async () => {
     await fs.copyFile(sourcePath, targetPath);
     manifestLogos[key] = `/logos/${targetFile}`;
   }
+
+  const faviconSourcePath = path.join(logoSourceRoot, FAVICON_FILE);
+  await fs.copyFile(faviconSourcePath, OUTPUT_FAVICON_PATH);
 
   return manifestLogos;
 };

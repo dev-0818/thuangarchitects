@@ -34,6 +34,11 @@ export const metadata: Metadata = {
     default: SITE_CONFIG.name,
     template: `%s | ${SITE_CONFIG.shortName}`
   },
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png"
+  },
   description: SITE_CONFIG.description,
   alternates: baseMetadata.alternates,
   openGraph: baseMetadata.openGraph,
