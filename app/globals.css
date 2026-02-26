@@ -24,8 +24,12 @@ body {
   padding: 0;
 }
 
+html {
+  font-size: 14px;
+}
+
 body {
-  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font-primary), "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: var(--ink);
   background: linear-gradient(180deg, #ffffff 0%, #fcfcfb 100%);
   line-height: 1.5;
@@ -106,7 +110,7 @@ a:hover {
 
 .brand-text-main {
   font-family: "Bodoni Moda", "Palatino Linotype", Georgia, serif;
-  font-size: 1rem;
+  font-size: 0.82rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink);
@@ -114,7 +118,7 @@ a:hover {
 }
 
 .brand-text-sub {
-  font-size: 0.6rem;
+  font-size: 0.48rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--muted);
@@ -136,7 +140,7 @@ a:hover {
 }
 
 .site-nav a {
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink);
@@ -197,7 +201,7 @@ body:has(.hero-main) .brand-icon {
   font-family: "Bodoni Moda", "Palatino Linotype", Georgia, serif;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  font-size: clamp(1.7rem, 2.2vw, 2.7rem);
+  font-size: clamp(1.45rem, 1.9vw, 2.25rem);
   font-weight: 600;
 }
 
@@ -206,7 +210,7 @@ body:has(.hero-main) .brand-icon {
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.75rem;
+  font-size: 0.62rem;
 }
 
 .home-hero {
@@ -267,7 +271,7 @@ body:has(.hero-main) .brand-icon {
   margin: 0;
   font-family: "Bodoni Moda", "Palatino Linotype", Georgia, serif;
   text-transform: uppercase;
-  font-size: clamp(1.8rem, 4vw, 3.8rem);
+  font-size: clamp(1.5rem, 3.4vw, 3.2rem);
   letter-spacing: 0.08em;
 }
 
@@ -275,6 +279,7 @@ body:has(.hero-main) .brand-icon {
   margin: 0.75rem 0 1.25rem;
   max-width: 640px;
   color: rgba(255, 255, 255, 0.9);
+  font-size: 0.92rem;
 }
 
 .home-overlay .home-actions {
@@ -289,7 +294,7 @@ body:has(.hero-main) .brand-icon {
   padding: 0.68rem 1rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
 }
 
 .button-link:hover {
@@ -328,7 +333,7 @@ body:has(.hero-main) .brand-icon {
 }
 
 .about-links a {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -366,7 +371,7 @@ body:has(.hero-main) .brand-icon {
 .about-details summary {
   cursor: pointer;
   text-transform: uppercase;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   letter-spacing: 0.14em;
 }
 
@@ -378,6 +383,14 @@ body:has(.hero-main) .brand-icon {
   margin-bottom: 3.5rem;
 }
 
+.portfolio-section > p {
+  margin: 0 0 1.3rem;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: #666568;
+}
+
 .portfolio-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -385,13 +398,15 @@ body:has(.hero-main) .brand-icon {
 }
 
 .project-card {
-  background: #ffffff;
-  border: 1px solid rgba(74, 72, 74, 0.12);
-  padding: 0.8rem;
+  background: transparent;
+  border: 1px solid rgba(74, 72, 74, 0.07);
+  padding: 0.5rem 0.4rem 0.55rem;
 }
 
 .project-card figure {
   margin: 0;
+  display: grid;
+  gap: 0.45rem;
 }
 
 .project-card picture,
@@ -400,14 +415,24 @@ body:has(.hero-main) .brand-icon {
   display: block;
 }
 
+.project-card .project-card-image {
+  width: 84%;
+  margin: 0 auto;
+}
+
 .project-card img {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
 }
 
+.project-card figcaption {
+  width: 84%;
+  margin: 0 auto;
+}
+
 .project-card h3 {
-  margin: 0.85rem 0 0.25rem;
-  font-size: 0.86rem;
+  margin: 0;
+  font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -415,7 +440,7 @@ body:has(.hero-main) .brand-icon {
 .project-card p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.86rem;
+  font-size: 0.66rem;
 }
 
 .project-layout {
@@ -435,6 +460,22 @@ body:has(.hero-main) .brand-icon {
   color: var(--muted);
 }
 
+.project-title {
+  margin: 0.3rem 0 0.65rem;
+  font-family: "Bodoni Moda", "Palatino Linotype", Georgia, serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: clamp(0.92rem, 1.18vw, 1.08rem);
+  font-weight: 600;
+}
+
+.project-description {
+  max-width: 34ch;
+  color: #5f5e60;
+  font-size: 0.66rem;
+  line-height: 1.6;
+}
+
 .project-nav {
   margin-top: 1.4rem;
   display: grid;
@@ -445,15 +486,17 @@ body:has(.hero-main) .brand-icon {
   display: inline-block;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 0.74rem;
+  font-size: 0.58rem;
 }
 
 .project-gallery {
   display: grid;
   gap: 1.1rem;
+  justify-items: center;
 }
 
 .project-gallery-item {
+  width: min(86%, 980px);
   margin: 0;
   overflow: hidden;
   background: #ffffff;
@@ -489,13 +532,13 @@ body:has(.hero-main) .brand-icon {
 
 .contact-label {
   text-transform: uppercase;
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   letter-spacing: 0.14em;
   color: var(--muted);
 }
 
 .contact-value {
-  font-size: 1rem;
+  font-size: 0.9rem;
   word-break: break-word;
 }
 
@@ -541,7 +584,7 @@ body:has(.hero-main) .brand-icon {
   }
 
   .site-nav a {
-    font-size: 0.67rem;
+    font-size: 0.62rem;
     letter-spacing: 0.1em;
   }
 
@@ -558,8 +601,12 @@ body:has(.hero-main) .brand-icon {
   }
 
   .brand-text-main {
-    font-size: 0.84rem;
+    font-size: 0.68rem;
     letter-spacing: 0.14em;
+  }
+
+  .project-gallery-item {
+    width: 100%;
   }
 
   .brand-text-sub {

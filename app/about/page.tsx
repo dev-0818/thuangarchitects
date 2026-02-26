@@ -13,16 +13,17 @@ export const metadata = buildMetadata({
 
 export default function AboutPage() {
   const featured = getFeaturedProject();
+  const aboutImage = featured?.images[1] ?? featured?.cover ?? null;
 
   return (
     <div className="page-main">
       <SectionHeading eyebrow="Studio" title="About" />
       <section className="about-layout">
         <aside className="about-aside">
-          {featured ? (
+          {aboutImage ? (
             <div className="about-panel">
               <ResponsiveImage
-                image={featured.cover}
+                image={aboutImage}
                 className="about-panel-image"
                 sizes="(max-width: 1100px) 100vw, 320px"
               />

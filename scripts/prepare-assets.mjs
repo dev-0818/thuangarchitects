@@ -31,6 +31,7 @@ const LOGO_FILES = {
 };
 
 const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
+const TARGET_LANDSCAPE_RATIO = 16 / 10;
 
 const toPosix = (value) => value.split(path.sep).join("/");
 
@@ -138,6 +139,71 @@ const createProjectDescription = (categoryKey, projectName) => {
   return `${title} is a residential architecture project shaped by calm proportions, natural light, and refined details.`;
 };
 
+const parseWebpDimensions = (buffer) => {
+  if (
+    buffer.length < 12 ||
+    buffer.toString("ascii", 0, 4) !== "RIFF" ||
+    buffer.toString("ascii", 8, 12) !== "WEBP"
+  ) {
+    return null;
+  }
+
+  let offset = 12;
+
+  while (offset + 8 <= buffer.length) {
+    const chunkType = buffer.toString("ascii", offset, offset + 4);
+    const chunkSize = buffer.readUInt32LE(offset + 4);
+    const dataOffset = offset + 8;
+    const chunkEnd = dataOffset + chunkSize;
+
+    if (chunkEnd > buffer.length) {
+      return null;
+    }
+
+    if (chunkType === "VP8X" && chunkSize >= 10) {
+      const width = 1 + buffer.readUIntLE(dataOffset + 4, 3);
+      const height = 1 + buffer.readUIntLE(dataOffset + 7, 3);
+      return { width, height };
+    }
+
+    if (chunkType === "VP8 " && chunkSize >= 10) {
+      const startCodeMatches =
+        buffer[dataOffset + 3] === 0x9d &&
+        buffer[dataOffset + 4] === 0x01 &&
+        buffer[dataOffset + 5] === 0x2a;
+
+      if (startCodeMatches) {
+        const width = buffer.readUInt16LE(dataOffset + 6) & 0x3fff;
+        const height = buffer.readUInt16LE(dataOffset + 8) & 0x3fff;
+        return { width, height };
+      }
+    }
+
+    if (chunkType === "VP8L" && chunkSize >= 5 && buffer[dataOffset] === 0x2f) {
+      const byte1 = buffer[dataOffset + 1];
+      const byte2 = buffer[dataOffset + 2];
+      const byte3 = buffer[dataOffset + 3];
+      const byte4 = buffer[dataOffset + 4];
+      const width = 1 + (((byte2 & 0x3f) << 8) | byte1);
+      const height = 1 + (((byte4 & 0x0f) << 10) | (byte3 << 2) | ((byte2 & 0xc0) >> 6));
+      return { width, height };
+    }
+
+    offset = chunkEnd + (chunkSize % 2);
+  }
+
+  return null;
+};
+
+const readWebpDimensions = async (filePath) => {
+  try {
+    const buffer = await fs.readFile(filePath);
+    return parseWebpDimensions(buffer);
+  } catch {
+    return null;
+  }
+};
+
 const prepareProjects = async () => {
   const projects = [];
 
@@ -170,6 +236,8 @@ const prepareProjects = async () => {
 
       const orderedGroups = [...groupMap.values()].sort(sortByProjectOrder);
       const images = [];
+      const coverCandidates = [];
+      const fallbackCoverCandidates = [];
 
       for (let index = 0; index < orderedGroups.length; index += 1) {
         const group = orderedGroups[index];
@@ -196,7 +264,7 @@ const prepareProjects = async () => {
           continue;
         }
 
-        images.push({
+        const image = {
           id: imageKey,
           alt: `${toTitle(projectName)} architectural image ${index + 1}`,
           sources: {
@@ -204,12 +272,53 @@ const prepareProjects = async () => {
             w1200,
             w1920
           }
-        });
+        };
+
+        images.push(image);
+
+        const dimensionSource = group.variants[1200] ?? group.variants[1920] ?? group.variants[600];
+        const dimensions = dimensionSource ? await readWebpDimensions(dimensionSource) : null;
+
+        if (dimensions?.width && dimensions?.height) {
+          const ratio = dimensions.width / dimensions.height;
+          fallbackCoverCandidates.push({
+            image,
+            ratio,
+            index: images.length - 1
+          });
+
+          if (ratio >= 1) {
+            coverCandidates.push({
+              image,
+              ratio,
+              index: images.length - 1
+            });
+          }
+        }
       }
 
       if (images.length === 0) {
         continue;
       }
+
+      coverCandidates.sort((left, right) => {
+        const leftRatioDelta = Math.abs(left.ratio - TARGET_LANDSCAPE_RATIO);
+        const rightRatioDelta = Math.abs(right.ratio - TARGET_LANDSCAPE_RATIO);
+
+        if (leftRatioDelta !== rightRatioDelta) {
+          return leftRatioDelta - rightRatioDelta;
+        }
+
+        return left.index - right.index;
+      });
+
+      fallbackCoverCandidates.sort((left, right) => {
+        if (left.ratio !== right.ratio) {
+          return right.ratio - left.ratio;
+        }
+
+        return left.index - right.index;
+      });
 
       projects.push({
         category: category.key,
@@ -217,7 +326,7 @@ const prepareProjects = async () => {
         name: projectName,
         slug: projectSlug,
         description: createProjectDescription(category.key, projectName),
-        cover: images[0],
+        cover: coverCandidates[0]?.image ?? fallbackCoverCandidates[0]?.image ?? images[0],
         images
       });
     }

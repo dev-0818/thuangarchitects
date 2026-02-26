@@ -1,9 +1,17 @@
 import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { BrandMark } from "@/components/brand-mark";
 import { SiteNav } from "@/components/site-nav";
 import { SITE_CONFIG } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import "./globals.css";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-primary",
+  display: "swap"
+});
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
@@ -46,7 +54,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={plusJakartaSans.variable}>
         <a href="#content" className="skip-link">
           Skip to content
         </a>

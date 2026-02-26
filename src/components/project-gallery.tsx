@@ -13,7 +13,7 @@ export const ProjectGallery = ({ images }: ProjectGalleryProps) => (
           image={image}
           eager={index === 0}
           className="project-gallery-image"
-          sizes="(max-width: 1024px) 100vw, 76vw"
+          sizes="(max-width: 1024px) 92vw, 62vw"
         />
       </figure>
     ))}

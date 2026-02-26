@@ -56,8 +56,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <section className="project-layout">
         <aside className="project-sidebar">
           <p className="section-eyebrow">{project.categoryLabel}</p>
-          <h1>{project.name}</h1>
-          <p>{project.description}</p>
+          <h1 className="project-title">{project.name}</h1>
+          <p className="project-description">{project.description}</p>
           <div className="project-nav">
             <Link href="/portfolio/">Back to Portfolio</Link>
             {adjacent.previous ? (
