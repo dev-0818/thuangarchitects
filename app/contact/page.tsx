@@ -24,6 +24,16 @@ export default function ContactPage() {
             {SITE_CONFIG.contactEmail}
           </a>
 
+          <span className="contact-label">WhatsApp</span>
+          <a
+            className="contact-value"
+            href={SITE_CONFIG.whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {SITE_CONFIG.whatsappNumber}
+          </a>
+
           <span className="contact-label">Instagram</span>
           <a
             className="contact-value"

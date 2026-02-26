@@ -6,6 +6,8 @@ export const SITE_CONFIG = {
   siteUrl: "https://www.thuangarchitect.com",
   instagramUrl: "https://instagram.com/thuangarchitect",
   contactEmail: "thuangarchitect@gmail.com",
+  whatsappNumber: "+62 853-5982-0664",
+  whatsappUrl: "https://wa.me/6285359820664",
 };
 
 export const NAV_LINKS = [
