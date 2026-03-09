@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { SectionHeading } from "@/components/section-heading";
-import { ResponsiveImage } from "@/components/responsive-image";
+import { LazyProjectCard } from "@/components/lazy-project-card";
 import { getCategoryMeta, getProjectsByCategory, type ProjectCategory } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 
@@ -30,24 +29,12 @@ export default function PortfolioPage() {
             </h2>
             <p>{meta.subtitle}</p>
             <div className="portfolio-grid">
-              {projects.map((project) => (
-                <Link
+              {projects.map((project, index) => (
+                <LazyProjectCard
                   key={`${project.category}-${project.slug}`}
-                  href={`/portfolio/${project.category}/${project.slug}/`}
-                  className="project-card"
-                >
-                  <figure>
-                    <ResponsiveImage
-                      image={project.cover}
-                      className="project-card-image"
-                      sizes="(max-width: 820px) 100vw, 50vw"
-                    />
-                    <figcaption>
-                      <h3>{project.name}</h3>
-                      <p>{project.categoryLabel}</p>
-                    </figcaption>
-                  </figure>
-                </Link>
+                  project={project}
+                  index={index}
+                />
               ))}
             </div>
           </section>
