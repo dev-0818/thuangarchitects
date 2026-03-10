@@ -1,7 +1,5 @@
 import { SectionHeading } from "@/components/section-heading";
-import { ResponsiveImage } from "@/components/responsive-image";
 import { ABOUT_CONTENT } from "@/lib/content";
-import { getFeaturedProject } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -12,23 +10,18 @@ export const metadata = buildMetadata({
 });
 
 export default function AboutPage() {
-  const featured = getFeaturedProject();
-  const aboutImage = featured?.images[1] ?? featured?.cover ?? null;
-
   return (
     <div className="page-main">
       <SectionHeading eyebrow="Studio" title="About" />
       <section className="about-layout">
         <aside className="about-aside">
-          {aboutImage ? (
-            <div className="about-panel">
-              <ResponsiveImage
-                image={aboutImage}
-                className="about-panel-image"
-                sizes="(max-width: 1100px) 100vw, 320px"
-              />
-            </div>
-          ) : null}
+          <div className="about-panel">
+            <img
+              src="/images/aboutimg_result_600.webp"
+              alt="Thuang Architect Studio"
+              className="about-panel-image"
+            />
+          </div>
           <nav className="about-links" aria-label="About page quick links">
             <a href="#about-overview">About</a>
             <a href="#about-services">Services</a>
@@ -38,7 +31,7 @@ export default function AboutPage() {
         <div className="about-content">
           <article id="about-overview">
             <h2 className="section-eyebrow">About</h2>
-            <p>{ABOUT_CONTENT.intro}</p>
+            <p className="about-intro">{ABOUT_CONTENT.intro}</p>
           </article>
 
           <article id="about-services" className="about-services">
@@ -66,4 +59,3 @@ export default function AboutPage() {
     </div>
   );
 }
-

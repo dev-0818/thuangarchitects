@@ -134,6 +134,14 @@ const prepareLogos = async () => {
   const faviconSourcePath = path.join(logoSourceRoot, FAVICON_FILE);
   await fs.copyFile(faviconSourcePath, OUTPUT_FAVICON_PATH);
 
+  try {
+    const aboutImageSource = path.join(logoSourceRoot, "aboutimg_result_600.webp");
+    const aboutImageTarget = path.join(OUTPUT_IMAGES_ROOT, "aboutimg_result_600.webp");
+    await fs.copyFile(aboutImageSource, aboutImageTarget);
+  } catch (err) {
+    console.warn("Could not copy about image:", err.message);
+  }
+
   return manifestLogos;
 };
 

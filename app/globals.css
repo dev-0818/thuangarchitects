@@ -289,7 +289,7 @@ body:has(.hero-main) .brand-logo {
 .about-layout {
   display: grid;
   grid-template-columns: 320px 1fr;
-  gap: 2.3rem;
+  gap: 2.8rem;
 }
 
 .about-aside {
@@ -299,9 +299,9 @@ body:has(.hero-main) .brand-logo {
 }
 
 .about-panel {
-  background: var(--fog);
+  background: var(--paper);
+  padding: 0.7rem;
   border: 1px solid rgba(74, 72, 74, 0.12);
-  padding: 1rem;
 }
 
 .about-panel img {
@@ -311,9 +311,9 @@ body:has(.hero-main) .brand-logo {
 }
 
 .about-links {
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   display: grid;
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 
 .about-links a {
@@ -321,11 +321,43 @@ body:has(.hero-main) .brand-logo {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
+  position: relative;
+  padding-left: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.about-links a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.4rem;
+  height: 1px;
+  background: rgba(74, 72, 74, 0.25);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.about-links a:hover {
+  color: var(--accent);
+}
+
+.about-links a:hover::before {
+  width: 0.6rem;
+  background: var(--accent);
 }
 
 .about-content {
   display: grid;
-  gap: 2rem;
+  gap: 2.4rem;
+}
+
+.about-intro {
+  margin: 0;
+  max-width: 64ch;
+  color: #5f5e60;
+  font-size: 0.82rem;
+  line-height: 1.85;
+  letter-spacing: 0.01em;
 }
 
 .about-content p {
@@ -339,17 +371,29 @@ body:has(.hero-main) .brand-logo {
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 0.6rem;
+  gap: 0;
 }
 
 .about-services li {
-  border-bottom: 1px solid rgba(74, 72, 74, 0.14);
-  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(74, 72, 74, 0.1);
+  padding: 0.55rem 0;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: #5f5e60;
+  transition: color 0.25s ease;
+}
+
+.about-services li:first-child {
+  border-top: 1px solid rgba(74, 72, 74, 0.1);
+}
+
+.about-services li:hover {
+  color: var(--ink);
 }
 
 .about-details details {
-  border-top: 1px solid rgba(74, 72, 74, 0.14);
-  padding: 0.85rem 0;
+  border-top: 1px solid rgba(74, 72, 74, 0.1);
+  padding: 0.9rem 0;
 }
 
 .about-details summary {
@@ -357,6 +401,11 @@ body:has(.hero-main) .brand-logo {
   text-transform: uppercase;
   font-size: 0.72rem;
   letter-spacing: 0.14em;
+  transition: color 0.25s ease;
+}
+
+.about-details summary:hover {
+  color: var(--accent);
 }
 
 .about-details p {
