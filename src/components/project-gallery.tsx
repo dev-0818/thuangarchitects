@@ -11,6 +11,7 @@ export const ProjectGallery = ({ images }: ProjectGalleryProps) => (
       <LazyGalleryItem
         key={image.id}
         image={image}
+        index={index}
         eager={index === 0}
       />
     ))}

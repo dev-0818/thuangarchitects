@@ -243,12 +243,10 @@ body:has(.hero-main) .brand-logo {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: linear-gradient(
-    180deg,
-    rgba(16, 16, 16, 0.05) 0%,
-    rgba(16, 16, 16, 0.38) 72%,
-    rgba(16, 16, 16, 0.56) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(16, 16, 16, 0.05) 0%,
+      rgba(16, 16, 16, 0.38) 72%,
+      rgba(16, 16, 16, 0.56) 100%);
   color: #ffffff;
   padding: 2rem;
 }
@@ -369,7 +367,7 @@ body:has(.hero-main) .brand-logo {
   margin-bottom: 3.5rem;
 }
 
-.portfolio-section > p {
+.portfolio-section>p {
   margin: 0 0 1.3rem;
   font-size: 0.7rem;
   line-height: 1.6;
@@ -385,14 +383,14 @@ body:has(.hero-main) .brand-logo {
 
 .project-card {
   background: transparent;
-  border: 1px solid rgba(74, 72, 74, 0.07);
-  padding: 0.5rem 0.4rem 0.55rem;
+  border: none;
+  padding: 0;
 }
 
 .project-card figure {
   margin: 0;
   display: grid;
-  gap: 0.45rem;
+  gap: 0.55rem;
 }
 
 .project-card picture,
@@ -404,6 +402,8 @@ body:has(.hero-main) .brand-logo {
 .project-card .project-card-image {
   width: 84%;
   margin: 0 auto;
+  padding: 0.6rem;
+  border: 1px solid rgba(74, 72, 74, 0.12);
 }
 
 .project-card img {
@@ -553,6 +553,7 @@ body:has(.hero-main) .brand-logo {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
