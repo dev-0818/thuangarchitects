@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { BrandMark } from "@/components/brand-mark";
 import { SiteNav } from "@/components/site-nav";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { SITE_CONFIG } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import "./globals.css";
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={plusJakartaSans.variable}>
+        <ScrollToTop />
         <a href="#content" className="skip-link">
           Skip to content
         </a>
