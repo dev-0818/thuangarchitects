@@ -17,7 +17,7 @@ export default function AboutPage() {
         <aside className="about-aside">
           <div className="about-panel">
             <img
-              src="/images/aboutimg_result_600.webp"
+              src="/images/aboutimg3.jpeg"
               alt="Thuang Architect Studio"
               className="about-panel-image"
             />

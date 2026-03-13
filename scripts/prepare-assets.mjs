@@ -135,8 +135,8 @@ const prepareLogos = async () => {
   await fs.copyFile(faviconSourcePath, OUTPUT_FAVICON_PATH);
 
   try {
-    const aboutImageSource = path.join(logoSourceRoot, "aboutimg_result_600.webp");
-    const aboutImageTarget = path.join(OUTPUT_IMAGES_ROOT, "aboutimg_result_600.webp");
+    const aboutImageSource = path.join(logoSourceRoot, "aboutimg3.jpeg");
+    const aboutImageTarget = path.join(OUTPUT_IMAGES_ROOT, "aboutimg3.jpeg");
     await fs.copyFile(aboutImageSource, aboutImageTarget);
   } catch (err) {
     console.warn("Could not copy about image:", err.message);
