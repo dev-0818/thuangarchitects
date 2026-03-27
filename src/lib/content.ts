@@ -1,6 +1,4 @@
-import generatedSiteConfig from "@/generated/site-config.json";
-
-const defaultSiteConfig = {
+export const SITE_CONFIG = {
   name: "Thuang Architect",
   shortName: "Thuang",
   description:
@@ -9,12 +7,7 @@ const defaultSiteConfig = {
   instagramUrl: "https://instagram.com/thuangarchitect",
   contactEmail: "thuangarchitect@gmail.com",
   whatsappNumber: "+62 853-5982-0664",
-  whatsappUrl: "https://wa.me/6285359820664"
-};
-
-export const SITE_CONFIG = {
-  ...defaultSiteConfig,
-  ...(generatedSiteConfig as Partial<typeof defaultSiteConfig>)
+  whatsappUrl: "https://wa.me/6285359820664",
 };
 
 export const NAV_LINKS = [

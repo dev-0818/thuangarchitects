@@ -9,8 +9,21 @@ const OUTPUT_LOGOS_ROOT = path.join(PUBLIC_ROOT, "logos");
 const OUTPUT_FAVICON_PATH = path.join(PUBLIC_ROOT, "favicon.png");
 const GENERATED_ROOT = path.join(ROOT, "src", "generated");
 const MANIFEST_PATH = path.join(GENERATED_ROOT, "projects-manifest.json");
-const SITE_CONFIG_PATH = path.join(GENERATED_ROOT, "site-config.json");
 
+const CATEGORY_SOURCES = [
+  {
+    key: "komersial",
+    label: "Komersial",
+    sourceDir: "KOMERSIAL WEBP"
+  },
+  {
+    key: "residential",
+    label: "Residential",
+    sourceDir: "RESIDENTAL WEBP"
+  }
+];
+
+const SIZES = [600, 1200, 1920];
 const LOGO_FILES = {
   navDefault: "bgwhitenew.png",
   navInnerDefault: "Logo Export-27.png",
@@ -21,96 +34,124 @@ const LOGO_FILES = {
 };
 const FAVICON_FILE = "Logo Export-35.png";
 
-const DEFAULT_SITE_CONFIG = {
-  name: "Thuang Architect",
-  shortName: "Thuang",
-  description:
-    "Thuang Architect is a minimalist architecture studio focused on high-end residential and commercial spaces with quiet luxury character.",
-  siteUrl: "https://www.thuangarchitect.com",
-  instagramUrl: "https://instagram.com/thuangarchitect",
-  contactEmail: "thuangarchitect@gmail.com",
-  whatsappNumber: "+62 853-5982-0664",
-  whatsappUrl: "https://wa.me/6285359820664"
+const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
+const TARGET_LANDSCAPE_RATIO = 16 / 10;
+
+const toPosix = (value) => value.split(path.sep).join("/");
+
+const slugify = (value) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+const stripSizeSuffix = (fileName) =>
+  fileName
+    .replace(/_result_(600|1200|1920)\.webp$/i, "")
+    .replace(/\.webp$/i, "");
+
+const normalizeFileToken = (value) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+const sortByProjectOrder = (left, right) => {
+  const leftOrder = left.order ?? Number.POSITIVE_INFINITY;
+  const rightOrder = right.order ?? Number.POSITIVE_INFINITY;
+
+  if (leftOrder !== rightOrder) {
+    return leftOrder - rightOrder;
+  }
+
+  return collator.compare(left.key, right.key);
 };
 
-const CATEGORY_LABELS = {
-  komersial: "Komersial",
-  residential: "Residential"
-};
+const toTitle = (value) =>
+  value
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean)
+    .map((segment) => segment[0].toUpperCase() + segment.slice(1))
+    .join(" ");
 
 const ensureDir = async (dir) => {
   await fs.mkdir(dir, { recursive: true });
 };
 
-const parseJsonFile = async (filePath, fallback) => {
+const readDirs = async (dir) => {
   try {
-    const raw = await fs.readFile(filePath, "utf8");
-    return JSON.parse(raw);
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    return entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .sort((a, b) => collator.compare(a, b));
   } catch {
-    return fallback;
+    return [];
   }
 };
 
-const buildWhatsAppUrl = (input) => {
-  const normalized = String(input ?? "").replace(/[^\d+]/g, "");
-  const digitsOnly = normalized.replace(/\D/g, "");
-
-  if (!digitsOnly) {
-    return DEFAULT_SITE_CONFIG.whatsappUrl;
+const readWebpFiles = async (dir) => {
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    return entries
+      .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".webp"))
+      .map((entry) => entry.name)
+      .sort((a, b) => collator.compare(a, b));
+  } catch {
+    return [];
   }
-
-  const phone = digitsOnly.startsWith("62")
-    ? digitsOnly
-    : digitsOnly.startsWith("0")
-      ? `62${digitsOnly.slice(1)}`
-      : digitsOnly.startsWith("8")
-        ? `62${digitsOnly}`
-        : digitsOnly;
-
-  return `https://api.whatsapp.com/send/?phone=${phone}&text&type=phone_number&app_absent=0`;
 };
 
-const getPublicSiteUrl = () => {
-  return process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_CONFIG.siteUrl;
+const extractOrder = (value) => {
+  const bracketMatch = value.match(/\((\d+)\)/);
+  if (bracketMatch) {
+    return Number(bracketMatch[1]);
+  }
+
+  const trailingMatch = value.match(/(\d+)(?!.*\d)/);
+  if (trailingMatch) {
+    return Number(trailingMatch[1]);
+  }
+
+  return Number.POSITIVE_INFINITY;
 };
 
-const getSupabaseConfig = () => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const prepareLogos = async () => {
+  const logoSourceRoot = path.join(IMAGES_ROOT, "logo png");
+  await ensureDir(OUTPUT_LOGOS_ROOT);
 
-  if (!url || !serviceRoleKey) {
-    return null;
+  const manifestLogos = {};
+
+  for (const [key, sourceFile] of Object.entries(LOGO_FILES)) {
+    const sourcePath = path.join(logoSourceRoot, sourceFile);
+    const targetFile = `${key}.png`;
+    const targetPath = path.join(OUTPUT_LOGOS_ROOT, targetFile);
+    await fs.copyFile(sourcePath, targetPath);
+    manifestLogos[key] = `/logos/${targetFile}`;
   }
 
-  return {
-    url,
-    serviceRoleKey
-  };
+  const faviconSourcePath = path.join(logoSourceRoot, FAVICON_FILE);
+  await fs.copyFile(faviconSourcePath, OUTPUT_FAVICON_PATH);
+
+  try {
+    const aboutImageSource = path.join(logoSourceRoot, "aboutimg3.jpeg");
+    const aboutImageTarget = path.join(OUTPUT_IMAGES_ROOT, "aboutimg3.jpeg");
+    await fs.copyFile(aboutImageSource, aboutImageTarget);
+  } catch (err) {
+    console.warn("Could not copy about image:", err.message);
+  }
+
+  return manifestLogos;
 };
 
-const fetchSupabaseJson = async (supabase, pathname, searchParams) => {
-  const url = new URL(pathname, supabase.url);
-
-  if (searchParams) {
-    Object.entries(searchParams).forEach(([key, value]) => {
-      url.searchParams.set(key, value);
-    });
+const createProjectDescription = (categoryKey, projectName) => {
+  const title = toTitle(projectName);
+  if (categoryKey === "komersial") {
+    return `${title} is a commercial architecture project focused on clean structure, material precision, and spatial clarity.`;
   }
 
-  const response = await fetch(url, {
-    headers: {
-      apikey: supabase.serviceRoleKey,
-      Authorization: `Bearer ${supabase.serviceRoleKey}`
-    },
-    cache: "no-store"
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Supabase request failed (${response.status}): ${text}`);
-  }
-
-  return response.json();
+  return `${title} is a residential architecture project shaped by calm proportions, natural light, and refined details.`;
 };
 
 const parseWebpDimensions = (buffer) => {
@@ -169,174 +210,163 @@ const parseWebpDimensions = (buffer) => {
   return null;
 };
 
-const dimensionCache = new Map();
-
-const readWebpDimensionsFromUrl = async (imageUrl) => {
-  if (!imageUrl) {
-    return null;
-  }
-
-  if (dimensionCache.has(imageUrl)) {
-    return dimensionCache.get(imageUrl);
-  }
-
+const readWebpDimensions = async (filePath) => {
   try {
-    const response = await fetch(imageUrl, { cache: "force-cache" });
-    if (!response.ok) {
-      dimensionCache.set(imageUrl, null);
-      return null;
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const dimensions = parseWebpDimensions(Buffer.from(arrayBuffer));
-    dimensionCache.set(imageUrl, dimensions);
-    return dimensions;
+    const buffer = await fs.readFile(filePath);
+    return parseWebpDimensions(buffer);
   } catch {
-    dimensionCache.set(imageUrl, null);
     return null;
   }
 };
 
-const prepareLogos = async () => {
-  const logoSourceRoot = path.join(IMAGES_ROOT, "logo png");
-  await ensureDir(OUTPUT_LOGOS_ROOT);
-  await ensureDir(OUTPUT_IMAGES_ROOT);
+const prepareProjects = async () => {
+  const projects = [];
 
-  const manifestLogos = {};
+  for (const category of CATEGORY_SOURCES) {
+    const categoryRoot1200 = path.join(IMAGES_ROOT, category.sourceDir, "1200");
+    const projectNames = await readDirs(categoryRoot1200);
 
-  for (const [key, sourceFile] of Object.entries(LOGO_FILES)) {
-    const sourcePath = path.join(logoSourceRoot, sourceFile);
-    const targetFile = `${key}.png`;
-    const targetPath = path.join(OUTPUT_LOGOS_ROOT, targetFile);
-    await fs.copyFile(sourcePath, targetPath);
-    manifestLogos[key] = `/logos/${targetFile}`;
-  }
+    for (const projectName of projectNames) {
+      const projectSlug = slugify(projectName);
+      const projectOutputDir = path.join(OUTPUT_IMAGES_ROOT, category.key, projectSlug);
+      await ensureDir(projectOutputDir);
 
-  const faviconSourcePath = path.join(logoSourceRoot, FAVICON_FILE);
-  await fs.copyFile(faviconSourcePath, OUTPUT_FAVICON_PATH);
+      const groupMap = new Map();
 
-  try {
-    const aboutImageSource = path.join(logoSourceRoot, "aboutimg3.jpeg");
-    const aboutImageTarget = path.join(OUTPUT_IMAGES_ROOT, "aboutimg3.jpeg");
-    await fs.copyFile(aboutImageSource, aboutImageTarget);
-  } catch (error) {
-    console.warn("Could not copy about image:", error.message);
-  }
+      for (const size of SIZES) {
+        const sourceDir = path.join(IMAGES_ROOT, category.sourceDir, String(size), projectName);
+        const files = await readWebpFiles(sourceDir);
 
-  return manifestLogos;
-};
-
-const normalizeProjectImage = async (projectName, image, index) => {
-  const dimensions = await readWebpDimensionsFromUrl(image.image_url);
-  const orientation =
-    dimensions && dimensions.height > dimensions.width ? "portrait" : "landscape";
-  const alt = image.alt_text || `${projectName} architectural image ${index + 1}`;
-
-  return {
-    id: image.id,
-    alt,
-    orientation,
-    sources: {
-      w600: image.image_url,
-      w1200: image.image_url,
-      w1920: image.image_url
-    }
-  };
-};
-
-const prepareProjectsFromSupabase = async (supabase) => {
-  const projects = await fetchSupabaseJson(supabase, "/rest/v1/projects", {
-    select:
-      "id,title,slug,category,description,cover_image_url,sort_order,updated_at,project_images(id,image_url,alt_text,sort_order)",
-    is_published: "eq.true",
-    order: "category.asc,sort_order.asc"
-  });
-
-  return Promise.all(
-    (projects ?? []).map(async (project) => {
-      const orderedImages = [...(project.project_images ?? [])].sort(
-        (left, right) => (left.sort_order ?? 0) - (right.sort_order ?? 0)
-      );
-      const images = await Promise.all(
-        orderedImages.map((image, index) => normalizeProjectImage(project.title, image, index))
-      );
-      const cover =
-        images.find((image) => image.sources.w1920 === project.cover_image_url) ?? images[0] ?? null;
-
-      if (!cover) {
-        return null;
+        for (const fileName of files) {
+          const key = stripSizeSuffix(fileName);
+          const current = groupMap.get(key) ?? {
+            key,
+            order: extractOrder(key),
+            variants: {}
+          };
+          current.variants[size] = path.join(sourceDir, fileName);
+          groupMap.set(key, current);
+        }
       }
 
-      return {
-        category: project.category,
-        categoryLabel: CATEGORY_LABELS[project.category] ?? project.category,
-        name: project.title,
-        slug: project.slug,
-        description: project.description || `${project.title} architecture project.`,
-        cover,
+      const orderedGroups = [...groupMap.values()].sort(sortByProjectOrder);
+      const images = [];
+      const coverCandidates = [];
+      const fallbackCoverCandidates = [];
+
+      for (let index = 0; index < orderedGroups.length; index += 1) {
+        const group = orderedGroups[index];
+        const imageKey = String(index + 1).padStart(2, "0");
+        const token = normalizeFileToken(group.key);
+        const copiedBySize = {};
+
+        for (const size of SIZES) {
+          const sourcePath = group.variants[size];
+          if (!sourcePath) {
+            continue;
+          }
+          const targetFile = `${imageKey}-${token}-${size}.webp`;
+          const targetPath = path.join(projectOutputDir, targetFile);
+          await fs.copyFile(sourcePath, targetPath);
+          copiedBySize[size] = toPosix(path.join("/images", category.key, projectSlug, targetFile));
+        }
+
+        const w600 = copiedBySize[600] ?? copiedBySize[1200] ?? copiedBySize[1920];
+        const w1200 = copiedBySize[1200] ?? copiedBySize[1920] ?? copiedBySize[600];
+        const w1920 = copiedBySize[1920] ?? copiedBySize[1200] ?? copiedBySize[600];
+
+        if (!w600 || !w1200 || !w1920) {
+          continue;
+        }
+
+        const image = {
+          id: imageKey,
+          alt: `${toTitle(projectName)} architectural image ${index + 1}`,
+          orientation: "landscape",
+          sources: {
+            w600,
+            w1200,
+            w1920
+          }
+        };
+
+        images.push(image);
+
+        const dimensionSource = group.variants[1200] ?? group.variants[1920] ?? group.variants[600];
+        const dimensions = dimensionSource ? await readWebpDimensions(dimensionSource) : null;
+
+        if (dimensions?.width && dimensions?.height) {
+          image.orientation = dimensions.height > dimensions.width ? "portrait" : "landscape";
+          const ratio = dimensions.width / dimensions.height;
+          fallbackCoverCandidates.push({
+            image,
+            ratio,
+            index: images.length - 1
+          });
+
+          if (ratio >= 1) {
+            coverCandidates.push({
+              image,
+              ratio,
+              index: images.length - 1
+            });
+          }
+        }
+      }
+
+      if (images.length === 0) {
+        continue;
+      }
+
+      coverCandidates.sort((left, right) => {
+        const leftRatioDelta = Math.abs(left.ratio - TARGET_LANDSCAPE_RATIO);
+        const rightRatioDelta = Math.abs(right.ratio - TARGET_LANDSCAPE_RATIO);
+
+        if (leftRatioDelta !== rightRatioDelta) {
+          return leftRatioDelta - rightRatioDelta;
+        }
+
+        return left.index - right.index;
+      });
+
+      fallbackCoverCandidates.sort((left, right) => {
+        if (left.ratio !== right.ratio) {
+          return right.ratio - left.ratio;
+        }
+
+        return left.index - right.index;
+      });
+
+      projects.push({
+        category: category.key,
+        categoryLabel: category.label,
+        name: projectName,
+        slug: projectSlug,
+        description: createProjectDescription(category.key, projectName),
+        cover: coverCandidates[0]?.image ?? fallbackCoverCandidates[0]?.image ?? images[0],
         images
-      };
-    })
-  ).then((result) => result.filter(Boolean));
-};
-
-const prepareSiteConfigFromSupabase = async (supabase) => {
-  const rows = await fetchSupabaseJson(supabase, "/rest/v1/site_settings", {
-    select: "site_title,tagline,bio,email,phone,instagram_url,whatsapp_url",
-    id: "eq.1",
-    limit: "1"
-  });
-
-  const settings = rows?.[0];
-  if (!settings) {
-    return {
-      ...DEFAULT_SITE_CONFIG,
-      siteUrl: getPublicSiteUrl()
-    };
+      });
+    }
   }
 
-  return {
-    name: settings.site_title || DEFAULT_SITE_CONFIG.name,
-    shortName: DEFAULT_SITE_CONFIG.shortName,
-    description: settings.tagline || DEFAULT_SITE_CONFIG.description,
-    siteUrl: getPublicSiteUrl(),
-    instagramUrl: settings.instagram_url || DEFAULT_SITE_CONFIG.instagramUrl,
-    contactEmail: settings.email || DEFAULT_SITE_CONFIG.contactEmail,
-    whatsappNumber: settings.phone || DEFAULT_SITE_CONFIG.whatsappNumber,
-    whatsappUrl: settings.whatsapp_url || buildWhatsAppUrl(settings.phone)
-  };
+  projects.sort((left, right) => {
+    if (left.category !== right.category) {
+      return collator.compare(left.category, right.category);
+    }
+    return collator.compare(left.name, right.name);
+  });
+
+  return projects;
 };
 
 const main = async () => {
+  await fs.rm(OUTPUT_IMAGES_ROOT, { recursive: true, force: true });
+  await fs.rm(OUTPUT_LOGOS_ROOT, { recursive: true, force: true });
+  await ensureDir(OUTPUT_IMAGES_ROOT);
+  await ensureDir(OUTPUT_LOGOS_ROOT);
   await ensureDir(GENERATED_ROOT);
 
-  const [logos, existingManifest] = await Promise.all([
-    prepareLogos(),
-    parseJsonFile(MANIFEST_PATH, { generatedAt: null, logos: {}, projects: [] })
-  ]);
-
-  const supabase = getSupabaseConfig();
-  let projects = existingManifest.projects ?? [];
-  let siteConfig = {
-    ...DEFAULT_SITE_CONFIG,
-    siteUrl: getPublicSiteUrl()
-  };
-
-  if (supabase) {
-    console.log("Fetching portfolio data from Supabase...");
-    const [supabaseProjects, supabaseSiteConfig] = await Promise.all([
-      prepareProjectsFromSupabase(supabase),
-      prepareSiteConfigFromSupabase(supabase)
-    ]);
-
-    if (supabaseProjects.length > 0) {
-      projects = supabaseProjects;
-    }
-
-    siteConfig = supabaseSiteConfig;
-  } else {
-    console.log("Supabase env not found. Reusing existing generated portfolio data.");
-  }
+  const [logos, projects] = await Promise.all([prepareLogos(), prepareProjects()]);
 
   const manifest = {
     generatedAt: new Date().toISOString(),
@@ -344,12 +374,9 @@ const main = async () => {
     projects
   };
 
-  await Promise.all([
-    fs.writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n", "utf8"),
-    fs.writeFile(SITE_CONFIG_PATH, JSON.stringify(siteConfig, null, 2) + "\n", "utf8")
-  ]);
+  await fs.writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 
-  console.log(`Prepared ${projects.length} published projects.`);
+  console.log(`Prepared ${projects.length} projects and copied responsive assets.`);
 };
 
 main().catch((error) => {
