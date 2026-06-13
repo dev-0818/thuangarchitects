@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Convergence } from "next/font/google";
 import { BrandMark } from "@/components/brand-mark";
 import { SiteNav } from "@/components/site-nav";
 import { ScrollToTop } from "@/components/scroll-to-top";
@@ -7,9 +7,9 @@ import { SITE_CONFIG } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const convergence = Convergence({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: "400",
   variable: "--font-primary",
   display: "swap"
 });
@@ -60,7 +60,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={plusJakartaSans.variable}>
+      <body className={convergence.variable}>
         <ScrollToTop />
         <a href="#content" className="skip-link">
           Skip to content

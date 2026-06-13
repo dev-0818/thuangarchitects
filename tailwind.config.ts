@@ -16,13 +16,16 @@ const config: Config = {
       },
       fontFamily: {
         display: [
-          "\"Bodoni Moda\"",
-          "\"Palatino Linotype\"",
+          "\"Engravers MT\"",
+          "\"Engravers\"",
+          "\"Copperplate\"",
+          "\"Trajan Pro\"",
           "Georgia",
           "serif"
         ],
         body: [
-          "\"Avenir Next\"",
+          "var(--font-primary)",
+          "\"Convergence\"",
           "\"Segoe UI\"",
           "\"Helvetica Neue\"",
           "Helvetica",
