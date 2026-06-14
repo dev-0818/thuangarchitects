@@ -36,6 +36,8 @@ const FAVICON_FILE = "Logo Export-35.png";
 
 const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
 const TARGET_LANDSCAPE_RATIO = 16 / 10;
+const STRIPPED_WEBP_CHUNKS = new Set(["EXIF", "XMP ", "ICCP"]);
+const VP8X_METADATA_FLAGS = 0b00101100;
 
 const toPosix = (value) => value.split(path.sep).join("/");
 
@@ -77,6 +79,67 @@ const toTitle = (value) =>
 
 const ensureDir = async (dir) => {
   await fs.mkdir(dir, { recursive: true });
+};
+
+const stripWebpMetadata = (buffer) => {
+  if (
+    buffer.length < 12 ||
+    buffer.toString("ascii", 0, 4) !== "RIFF" ||
+    buffer.toString("ascii", 8, 12) !== "WEBP"
+  ) {
+    return buffer;
+  }
+
+  const chunks = [];
+  let offset = 12;
+  let changed = false;
+
+  while (offset + 8 <= buffer.length) {
+    const chunkType = buffer.toString("ascii", offset, offset + 4);
+    const chunkSize = buffer.readUInt32LE(offset + 4);
+    const dataOffset = offset + 8;
+    const chunkEnd = dataOffset + chunkSize;
+    const paddedEnd = chunkEnd + (chunkSize % 2);
+
+    if (chunkEnd > buffer.length) {
+      return buffer;
+    }
+
+    if (STRIPPED_WEBP_CHUNKS.has(chunkType)) {
+      changed = true;
+      offset = paddedEnd;
+      continue;
+    }
+
+    if (chunkType === "VP8X" && chunkSize >= 10) {
+      const chunk = Buffer.from(buffer.subarray(offset, paddedEnd));
+      const flagsOffset = 8;
+      const originalFlags = chunk[flagsOffset];
+      chunk[flagsOffset] = originalFlags & ~VP8X_METADATA_FLAGS;
+      changed ||= chunk[flagsOffset] !== originalFlags;
+      chunks.push(chunk);
+    } else {
+      chunks.push(Buffer.from(buffer.subarray(offset, paddedEnd)));
+    }
+
+    offset = paddedEnd;
+  }
+
+  if (!changed || offset !== buffer.length) {
+    return buffer;
+  }
+
+  const payloadSize = chunks.reduce((total, chunk) => total + chunk.length, 4);
+  const output = Buffer.alloc(8);
+  output.write("RIFF", 0, "ascii");
+  output.writeUInt32LE(payloadSize, 4);
+
+  return Buffer.concat([output, Buffer.from("WEBP", "ascii"), ...chunks]);
+};
+
+const copyWebpWithoutMetadata = async (sourcePath, targetPath) => {
+  const buffer = await fs.readFile(sourcePath);
+  await fs.writeFile(targetPath, stripWebpMetadata(buffer));
 };
 
 const readDirs = async (dir) => {
@@ -267,7 +330,7 @@ const prepareProjects = async () => {
           }
           const targetFile = `${imageKey}-${token}-${size}.webp`;
           const targetPath = path.join(projectOutputDir, targetFile);
-          await fs.copyFile(sourcePath, targetPath);
+          await copyWebpWithoutMetadata(sourcePath, targetPath);
           copiedBySize[size] = toPosix(path.join("/images", category.key, projectSlug, targetFile));
         }
 

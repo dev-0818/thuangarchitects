@@ -1,12 +1,18 @@
 import { SectionHeading } from "@/components/section-heading";
 import { ABOUT_CONTENT } from "@/lib/content";
-import { buildMetadata } from "@/lib/seo";
+import { aboutPageJsonLd, buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "About",
+  title: "About Thuang Architect",
   description:
-    "Learn about Thuang Architect's approach, services, and design principles for high-end architectural projects.",
-  path: "/about/"
+    "Learn about Thuang Architect, a Medan-based architecture studio for residential and commercial projects in Medan and outside Medan.",
+  path: "/about/",
+  keywords: [
+    "Thuang Architect Medan",
+    "arsitek medan",
+    "architect medan",
+    "architecture studio medan"
+  ]
 });
 
 export default function AboutPage() {
@@ -56,6 +62,7 @@ export default function AboutPage() {
           </article>
         </div>
       </section>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }} />
     </div>
   );
 }

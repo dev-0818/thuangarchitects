@@ -4,7 +4,7 @@ import { BrandMark } from "@/components/brand-mark";
 import { SiteNav } from "@/components/site-nav";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { SITE_CONFIG } from "@/lib/content";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, siteJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const convergence = Convergence({
@@ -14,19 +14,18 @@ const convergence = Convergence({
   display: "swap"
 });
 
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: SITE_CONFIG.name,
-  url: SITE_CONFIG.siteUrl,
-  email: SITE_CONFIG.contactEmail,
-  sameAs: [SITE_CONFIG.instagramUrl]
-};
-
 const baseMetadata = buildMetadata({
-  title: `${SITE_CONFIG.name} | Quiet Luxury Architecture`,
+  title: `${SITE_CONFIG.name} | Arsitek Medan`,
   description: SITE_CONFIG.description,
-  path: "/"
+  path: "/",
+  keywords: [
+    "arsitek medan",
+    "architect medan",
+    "jasa arsitek medan",
+    "architecture studio medan",
+    "residential architect medan",
+    "commercial architect medan"
+  ]
 });
 
 export const metadata: Metadata = {
@@ -47,6 +46,9 @@ export const metadata: Metadata = {
   keywords: [
     "architecture studio",
     "minimalist architecture",
+    "arsitek medan",
+    "architect medan",
+    "jasa arsitek medan",
     "residential architecture",
     "commercial architecture",
     "Thuang Architect"
@@ -74,7 +76,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </header>
           <main id="content">{children}</main>
         </div>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} />
       </body>
     </html>
   );

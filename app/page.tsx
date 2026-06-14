@@ -4,10 +4,18 @@ import type { ProjectImage } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "THUANGARCHITECT",
+  title: "Thuang Architect | Arsitek Medan",
   description:
-    "A curated portfolio of residential and commercial architecture shaped by minimal forms, crafted materials, and controlled light.",
-  path: "/"
+    "Thuang Architect is a Medan-based architecture studio for residential and commercial projects in Medan and outside Medan, shaped by minimal forms, crafted materials, and controlled light.",
+  path: "/",
+  keywords: [
+    "arsitek medan",
+    "architect medan",
+    "jasa arsitek medan",
+    "arsitek rumah medan",
+    "commercial architect medan",
+    "residential architect medan"
+  ]
 });
 
 export default function HomePage() {

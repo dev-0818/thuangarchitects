@@ -4,6 +4,7 @@ out
 public/images
 public/logos
 src/generated/projects-manifest.json
+tsconfig.tsbuildinfo
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

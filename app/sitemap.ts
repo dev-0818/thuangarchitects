@@ -4,7 +4,7 @@ import { getAllProjects } from "@/lib/projects";
 
 export const dynamic = "force-static";
 
-const staticRoutes = ["/", "/about/", "/portfolio/", "/contact/"];
+const staticRoutes = ["/", "/about/", "/portfolio/", "/contact/", "/arsitek-medan/"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
