@@ -17,6 +17,7 @@ export const HeroSlideshow = ({
   onSlideChange
 }: HeroSlideshowProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null);
   const [reduceMotion, setReduceMotion] = useState(true);
 
   const normalizedSlides = useMemo(() => slides.filter(Boolean), [slides]);
@@ -36,11 +37,23 @@ export const HeroSlideshow = ({
     }
 
     const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % normalizedSlides.length);
+      setActiveIndex((current) => {
+        setOutgoingIndex(current);
+        return (current + 1) % normalizedSlides.length;
+      });
     }, intervalMs);
 
     return () => window.clearInterval(timer);
   }, [intervalMs, normalizedSlides.length, reduceMotion]);
+
+  useEffect(() => {
+    if (outgoingIndex === null) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => setOutgoingIndex(null), 1500);
+    return () => window.clearTimeout(timer);
+  }, [outgoingIndex]);
 
   useEffect(() => {
     onSlideChange?.(activeIndex);
@@ -50,29 +63,47 @@ export const HeroSlideshow = ({
     return null;
   }
 
-  const activeSlide = normalizedSlides[activeIndex];
-  const mobileSlideSource =
-    activeIndex === 0
-      ? activeSlide.sources.w1200
-      : normalizedMobileSlides.length > 0
-        ? normalizedMobileSlides[activeIndex % normalizedMobileSlides.length]
-        : activeSlide.sources.w1200;
+  const nextIndex = (activeIndex + 1) % normalizedSlides.length;
+  const renderedIndices = Array.from(
+    new Set([
+      ...(outgoingIndex === null ? [] : [outgoingIndex]),
+      activeIndex,
+      ...(reduceMotion || normalizedSlides.length === 1 ? [] : [nextIndex])
+    ])
+  );
 
   return (
     <div className="home-hero-media" aria-hidden="true">
-      <picture key={`${activeSlide.id}-${activeIndex}`} className="home-slide is-active">
-        <source media="(max-width: 820px)" srcSet={mobileSlideSource} />
-        <source media="(max-width: 1280px)" srcSet={activeSlide.sources.w1200} />
-        <img
-          src={activeSlide.sources.w1920}
-          alt=""
-          width={activeSlide.width}
-          height={activeSlide.height}
-          loading="eager"
-          fetchPriority={activeIndex === 0 ? "high" : "auto"}
-          decoding="async"
-        />
-      </picture>
+      {renderedIndices.map((index) => {
+        const slide = normalizedSlides[index];
+        const isActive = index === activeIndex;
+        const isOutgoing = index === outgoingIndex;
+        const mobileSlideSource =
+          index === 0
+            ? slide.sources.w1200
+            : normalizedMobileSlides.length > 0
+              ? normalizedMobileSlides[index % normalizedMobileSlides.length]
+              : slide.sources.w1200;
+
+        return (
+          <picture
+            key={slide.id}
+            className={`home-slide${isActive ? " is-active" : isOutgoing ? " is-exiting" : ""}`}
+          >
+            <source media="(max-width: 820px)" srcSet={mobileSlideSource} />
+            <source media="(max-width: 1280px)" srcSet={slide.sources.w1200} />
+            <img
+              src={slide.sources.w1920}
+              alt=""
+              width={slide.width}
+              height={slide.height}
+              loading={isActive ? "eager" : "lazy"}
+              fetchPriority={isActive && index === 0 ? "high" : "auto"}
+              decoding="async"
+            />
+          </picture>
+        );
+      })}
     </div>
   );
 };

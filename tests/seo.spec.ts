@@ -56,10 +56,48 @@ test.describe("SEO rendering", () => {
     await expect(images.first()).toHaveAttribute("height", /\d+/);
   });
 
+  test("project description uses the full mobile sidebar width", async ({ page }) => {
+    await page.setViewportSize({ width: 412, height: 915 });
+    await page.goto("/portfolio/residential/lexington/");
+
+    const dimensions = await page.evaluate(() => ({
+      description: document.querySelector(".project-description")?.getBoundingClientRect().width,
+      sidebar: document.querySelector(".project-sidebar")?.getBoundingClientRect().width,
+      overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+    }));
+
+    expect(dimensions.description).toBe(dimensions.sidebar);
+    expect(dimensions.overflow).toBe(0);
+  });
+
   test("category navigation reaches a project", async ({ page }) => {
     await page.goto("/portfolio/residential/");
     await page.locator(".project-card").first().click();
     await expect(page).toHaveURL(/\/portfolio\/residential\/[^/]+\/$/);
+  });
+
+  test("homepage slideshow crossfades between preloaded slides", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    const initialSource = await page.locator(".home-slide.is-active img").getAttribute("src");
+
+    await expect(page.locator(".home-slide")).toHaveCount(2);
+    await page.waitForFunction(
+      (source) =>
+        document.querySelector(".home-slide.is-active img")?.getAttribute("src") !== source &&
+        document.querySelector(".home-slide.is-exiting"),
+      initialSource,
+      { timeout: 7000 }
+    );
+
+    await expect(page.locator(".home-slide.is-exiting img")).toHaveAttribute("src", initialSource ?? "");
+    const duration = await page
+      .locator(".home-slide.is-active")
+      .evaluate((slide) => getComputedStyle(slide).transitionDuration);
+    expect(duration).toBe("1.4s");
+    await expect(page.locator(".home-brand-logo")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Explore Portfolio" })).toBeVisible();
   });
 
   test("reduced motion disables slideshow changes", async ({ page }) => {

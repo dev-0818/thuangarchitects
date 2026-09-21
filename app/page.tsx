@@ -67,8 +67,6 @@ export default function HomePage() {
       <HomeHero
         slides={heroSlides}
         mobilePortraitSlides={mobilePortraitSlides}
-        featuredName={lexingtonProject.name}
-        featuredHref={`/portfolio/${lexingtonProject.category}/${lexingtonProject.slug}/`}
         homeLogo={brandAssets.homeLogoB}
       />
     </div>

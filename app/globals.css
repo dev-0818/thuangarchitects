@@ -285,17 +285,26 @@ body:has(.hero-main) .brand-logo {
 .home-slide {
   position: absolute;
   inset: 0;
+  z-index: 0;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.home-slide.is-exiting {
+  z-index: 1;
+  opacity: 1;
 }
 
 .home-slide.is-active {
+  z-index: 2;
   opacity: 1;
 }
 
 .home-overlay {
   position: absolute;
   inset: 0;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -324,16 +333,10 @@ body:has(.hero-main) .brand-logo {
   text-transform: uppercase;
 }
 
-.home-overlay p {
-  margin: 0.75rem 0 1.25rem;
-  max-width: 640px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.92rem;
-}
-
 .home-overlay .home-actions {
   display: flex;
   gap: 0.9rem;
+  margin-top: 1.15rem;
 }
 
 .button-link {
@@ -1021,6 +1024,10 @@ body:has(.hero-main) .brand-logo {
 
   .project-layout {
     grid-template-columns: 1fr;
+  }
+
+  .project-description {
+    max-width: none;
   }
 }
 
