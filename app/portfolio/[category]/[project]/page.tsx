@@ -5,12 +5,10 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
 import { ProjectFacts } from "@/components/project-facts";
 import { ProjectGallery } from "@/components/project-gallery";
-import { RelatedProjects } from "@/components/related-projects";
 import {
   getAdjacentProjects,
   getAllProjectParams,
   getProjectByParams,
-  getRelatedProjects,
   type ProjectCategory
 } from "@/lib/projects";
 import { buildMetadata, buildProjectJsonLd, type BreadcrumbItem } from "@/lib/seo";
@@ -60,7 +58,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const adjacent = getAdjacentProjects(project.category as ProjectCategory, project.slug);
-  const relatedProjects = getRelatedProjects(project);
   const path = `/portfolio/${project.category}/${project.slug}/`;
   const breadcrumbs: BreadcrumbItem[] = [
     { name: "Home", path: "/" },
@@ -106,20 +103,45 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </section>
           ) : null}
           <nav className="project-nav" aria-label="Project navigation">
-            <Link href={`/portfolio/${project.category}/`}>All {project.categoryLabel} Projects</Link>
-            <Link href="/portfolio/">Back to Portfolio</Link>
-            {adjacent.previous ? (
-              <Link href={`/portfolio/${adjacent.previous.category}/${adjacent.previous.slug}/`}>
-                Previous: {adjacent.previous.name}
-              </Link>
-            ) : null}
-            {adjacent.next ? (
-              <Link href={`/portfolio/${adjacent.next.category}/${adjacent.next.slug}/`}>
-                Next: {adjacent.next.name}
-              </Link>
+            <div className="project-nav-group">
+              <p className="project-nav-heading">Project Index</p>
+              <div className="project-nav-index">
+                <Link href={`/portfolio/${project.category}/`}>
+                  <span>All {project.categoryLabel} Projects</span>
+                  <span aria-hidden="true">↗</span>
+                </Link>
+                <Link href="/portfolio/">
+                  <span>Back to Portfolio</span>
+                  <span aria-hidden="true">↗</span>
+                </Link>
+              </div>
+            </div>
+            {adjacent.previous || adjacent.next ? (
+              <div className="project-nav-group">
+                <p className="project-nav-heading">Browse Projects</p>
+                <div className="project-nav-adjacent">
+                  {adjacent.previous ? (
+                    <Link
+                      className="project-nav-previous"
+                      href={`/portfolio/${adjacent.previous.category}/${adjacent.previous.slug}/`}
+                    >
+                      <span className="project-nav-direction">← Previous</span>
+                      <span className="project-nav-name">{adjacent.previous.name}</span>
+                    </Link>
+                  ) : null}
+                  {adjacent.next ? (
+                    <Link
+                      className="project-nav-next"
+                      href={`/portfolio/${adjacent.next.category}/${adjacent.next.slug}/`}
+                    >
+                      <span className="project-nav-direction">Next →</span>
+                      <span className="project-nav-name">{adjacent.next.name}</span>
+                    </Link>
+                  ) : null}
+                </div>
+              </div>
             ) : null}
           </nav>
-          <RelatedProjects projects={relatedProjects} />
         </aside>
         <ProjectGallery images={project.images} />
       </section>

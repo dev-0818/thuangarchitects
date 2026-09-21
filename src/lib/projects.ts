@@ -125,19 +125,3 @@ export const getAdjacentProjects = (category: ProjectCategory, slug: string) => 
     next: categoryProjects[currentIndex + 1] ?? null
   };
 };
-
-export const getRelatedProjects = (project: Project, limit = 3) => {
-  const curated = (project.relatedProjects ?? [])
-    .map((key) => {
-      const [category, slug] = key.split("/");
-      return getProjectByParams(category, slug);
-    })
-    .filter((candidate): candidate is Project => Boolean(candidate && candidate.slug !== project.slug));
-  const fallback = getProjectsByCategory(project.category).filter(
-    (candidate) =>
-      candidate.slug !== project.slug &&
-      !curated.some((related) => related.slug === candidate.slug)
-  );
-
-  return [...curated, ...fallback].slice(0, limit);
-};

@@ -744,18 +744,110 @@ body:has(.hero-main) .brand-logo {
 }
 
 .project-nav {
-  margin-top: 1.4rem;
-  display: grid;
-  gap: 0.7rem;
+  margin-top: 1.8rem;
+  border-top: 1px solid rgba(74, 72, 74, 0.14);
 }
 
-.project-nav a {
-  min-height: 24px;
+.project-nav-group {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(74, 72, 74, 0.14);
+}
+
+.project-nav-heading {
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.project-nav-index {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.15rem;
+}
+
+.project-nav-index a {
+  min-height: 30px;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  gap: 0.55rem;
+  color: var(--ink);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.58rem;
+}
+
+.project-nav-index a + a {
+  padding-left: 0.85rem;
+  border-left: 1px solid rgba(74, 72, 74, 0.1);
+}
+
+.project-nav-index a > span {
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.project-nav-index a > span:last-child {
+  color: var(--muted);
+}
+
+.project-nav-index a:hover > span:first-child,
+.project-nav-index a:focus-visible > span:first-child {
+  transform: translateX(0.15rem);
+}
+
+.project-nav-index a:hover > span:last-child,
+.project-nav-index a:focus-visible > span:last-child {
+  color: var(--accent);
+  transform: translate(0.14rem, -0.14rem);
+}
+
+.project-nav-adjacent {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.project-nav-adjacent a {
+  min-height: 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.project-nav-next {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.project-nav-direction {
+  color: var(--muted);
+  font-size: 0.54rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.project-nav-name {
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  text-transform: uppercase;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.project-nav-adjacent a:hover .project-nav-name {
+  color: var(--accent);
+}
+
+.project-nav-previous:hover .project-nav-name {
+  transform: translateX(-0.15rem);
+}
+
+.project-nav-next:hover .project-nav-name {
+  transform: translateX(0.15rem);
 }
 
 .project-facts {
@@ -794,20 +886,14 @@ body:has(.hero-main) .brand-logo {
   text-transform: uppercase;
 }
 
-.related-projects {
-  margin-top: 1.8rem;
-}
-
-.related-projects ul,
 .context-links {
   display: grid;
-  gap: 0.55rem;
   margin: 0;
   padding: 0;
   list-style: none;
+  gap: 0.55rem;
 }
 
-.related-projects a,
 .context-links a {
   font-size: 0.64rem;
   letter-spacing: 0.08em;
@@ -1001,6 +1087,20 @@ body:has(.hero-main) .brand-logo {
 
   .home-overlay .home-actions {
     flex-wrap: wrap;
+  }
+
+  .project-nav-index a {
+    min-height: 44px;
+  }
+
+  .project-nav-adjacent {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .project-nav-next {
+    text-align: left;
+    align-items: flex-start;
   }
 
   .project-gallery-item {
