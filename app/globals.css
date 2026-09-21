@@ -1093,16 +1093,6 @@ body:has(.hero-main) .brand-logo {
     min-height: 44px;
   }
 
-  .project-nav-adjacent {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .project-nav-next {
-    text-align: left;
-    align-items: flex-start;
-  }
-
   .project-gallery-item {
     width: 100%;
   }
