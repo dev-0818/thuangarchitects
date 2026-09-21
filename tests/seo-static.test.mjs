@@ -23,13 +23,13 @@ const extractJsonLd = (html) =>
 test("robots permits search crawlers and references sitemap", async () => {
   const robots = await read("robots.txt");
   assert.match(robots, /User-Agent: OAI-SearchBot\s+Allow: \//);
-  assert.match(robots, /Sitemap: https:\/\/thuangarchitect\.com\/sitemap\.xml/);
+  assert.match(robots, /Sitemap: https:\/\/www\.thuangarchitect\.com\/sitemap\.xml/);
 });
 
 test("sitemap contains canonical routes without artificial dates", async () => {
   const sitemap = await read("sitemap.xml");
-  assert.match(sitemap, /https:\/\/thuangarchitect\.com\/portfolio\/residential\//);
-  assert.match(sitemap, /https:\/\/thuangarchitect\.com\/portfolio\/komersial\//);
+  assert.match(sitemap, /https:\/\/www\.thuangarchitect\.com\/portfolio\/residential\//);
+  assert.match(sitemap, /https:\/\/www\.thuangarchitect\.com\/portfolio\/komersial\//);
   assert.doesNotMatch(sitemap, /<lastmod>/);
   assert.equal((sitemap.match(/<loc>/g) ?? []).length, 26);
 });
@@ -39,7 +39,7 @@ test("major pages contain one H1, metadata, canonical, and valid JSON-LD", async
     const html = await read(route);
     assert.equal((html.match(/<h1[ >]/g) ?? []).length, 1, route);
     assert.match(html, /<meta name="description" content="[^"]+"/, route);
-    assert.match(html, /<link rel="canonical" href="https:\/\/thuangarchitect\.com\//, route);
+    assert.match(html, /<link rel="canonical" href="https:\/\/www\.thuangarchitect\.com\//, route);
     assert.match(html, /<meta property="og:image" content="https:\/\//, route);
     extractJsonLd(html);
     assert.doesNotMatch(html, /noindex/, route);

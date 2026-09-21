@@ -28,7 +28,7 @@ test.describe("SEO rendering", () => {
       await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /.+/);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         "href",
-        new RegExp(`https://thuangarchitect\\.com${route === "/" ? "/" : route}`)
+        new RegExp(`https://www\\.thuangarchitect\\.com${route === "/" ? "/" : route}`)
       );
       await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /^https:/);
       expect(severeErrors).toEqual([]);

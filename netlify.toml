@@ -6,8 +6,8 @@
   NODE_VERSION = "24"
 
 [[redirects]]
-  from = "https://www.thuangarchitect.com/*"
-  to = "https://thuangarchitect.com/:splat"
+  from = "https://thuangarchitect.com/*"
+  to = "https://www.thuangarchitect.com/:splat"
   status = 301
   force = true
 

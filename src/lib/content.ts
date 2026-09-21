@@ -3,7 +3,7 @@ export const SITE_CONFIG = {
   shortName: "Thuang",
   description:
     "Thuang Architect is an architecture studio based in Medan and Jakarta, creating thoughtful residential and commercial spaces.",
-  siteUrl: "https://thuangarchitect.com",
+  siteUrl: "https://www.thuangarchitect.com",
   defaultSocialImage: "/images/residential/lexington/08-lxt-8-1920.webp",
   instagramUrl: "https://instagram.com/thuangarchitect",
   contactEmail: "thuangarchitect@gmail.com",
