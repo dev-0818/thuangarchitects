@@ -9,6 +9,8 @@ const OUTPUT_LOGOS_ROOT = path.join(PUBLIC_ROOT, "logos");
 const OUTPUT_FAVICON_PATH = path.join(PUBLIC_ROOT, "favicon.png");
 const GENERATED_ROOT = path.join(ROOT, "src", "generated");
 const MANIFEST_PATH = path.join(GENERATED_ROOT, "projects-manifest.json");
+const PROJECT_CONTENT_PATH = path.join(ROOT, "src", "content", "project-content.json");
+const CONTENT_TODO_PATH = path.join(ROOT, "docs", "seo-geo", "CONTENT_TODO.md");
 
 const CATEGORY_SOURCES = [
   {
@@ -208,15 +210,6 @@ const prepareLogos = async () => {
   return manifestLogos;
 };
 
-const createProjectDescription = (categoryKey, projectName) => {
-  const title = toTitle(projectName);
-  if (categoryKey === "komersial") {
-    return `${title} is a commercial architecture project focused on clean structure, material precision, and spatial clarity.`;
-  }
-
-  return `${title} is a residential architecture project shaped by calm proportions, natural light, and refined details.`;
-};
-
 const parseWebpDimensions = (buffer) => {
   if (
     buffer.length < 12 ||
@@ -342,10 +335,21 @@ const prepareProjects = async () => {
           continue;
         }
 
+        const dimensionSource = group.variants[1920] ?? group.variants[1200] ?? group.variants[600];
+        const dimensions = dimensionSource ? await readWebpDimensions(dimensionSource) : null;
+
+        if (!dimensions?.width || !dimensions?.height) {
+          throw new Error(`Could not read dimensions for ${projectName}/${group.key}`);
+        }
+
         const image = {
           id: imageKey,
-          alt: `${toTitle(projectName)} architectural image ${index + 1}`,
-          orientation: "landscape",
+          alt: `${toTitle(projectName)} project image ${imageKey}`,
+          caption: null,
+          credit: null,
+          width: dimensions.width,
+          height: dimensions.height,
+          orientation: dimensions.height > dimensions.width ? "portrait" : "landscape",
           sources: {
             w600,
             w1200,
@@ -355,11 +359,7 @@ const prepareProjects = async () => {
 
         images.push(image);
 
-        const dimensionSource = group.variants[1200] ?? group.variants[1920] ?? group.variants[600];
-        const dimensions = dimensionSource ? await readWebpDimensions(dimensionSource) : null;
-
-        if (dimensions?.width && dimensions?.height) {
-          image.orientation = dimensions.height > dimensions.width ? "portrait" : "landscape";
+        if (dimensions.width && dimensions.height) {
           const ratio = dimensions.width / dimensions.height;
           fallbackCoverCandidates.push({
             image,
@@ -405,7 +405,6 @@ const prepareProjects = async () => {
         categoryLabel: category.label,
         name: projectName,
         slug: projectSlug,
-        description: createProjectDescription(category.key, projectName),
         cover: coverCandidates[0]?.image ?? fallbackCoverCandidates[0]?.image ?? images[0],
         images
       });
@@ -422,6 +421,57 @@ const prepareProjects = async () => {
   return projects;
 };
 
+const TODO_FIELDS = [
+  ["projectType", "Confirm project type"],
+  ["city", "Confirm city"],
+  ["province", "Confirm province"],
+  ["country", "Confirm country"],
+  ["year", "Confirm project year"],
+  ["status", "Confirm project status"],
+  ["scope", "Confirm project scope"],
+  ["siteArea", "Confirm site area if public"],
+  ["buildingArea", "Confirm building area if public"],
+  ["materials", "Confirm key materials"],
+  ["photographer", "Confirm photographer credit"],
+  ["shortDescription", "Approve project narrative"]
+];
+
+const writeContentTodo = async (projects) => {
+  let content;
+  try {
+    content = JSON.parse(await fs.readFile(PROJECT_CONTENT_PATH, "utf8"));
+  } catch {
+    content = {};
+  }
+
+  const knownProjects = new Set(projects.map((project) => `${project.category}/${project.slug}`));
+  const unknownContentKeys = Object.keys(content).filter((key) => !knownProjects.has(key));
+  if (unknownContentKeys.length > 0) {
+    throw new Error(`Unknown project content keys: ${unknownContentKeys.join(", ")}`);
+  }
+
+  const sections = projects.map((project) => {
+    const projectContent = content[`${project.category}/${project.slug}`] ?? {};
+    const missingFields = TODO_FIELDS.filter(([key]) => {
+      const value = projectContent[key];
+      return value == null || value === "" || (Array.isArray(value) && value.length === 0);
+    });
+    const missingImageContent = Object.keys(projectContent.images ?? {}).length < project.images.length;
+    const items = missingFields.map(([, label]) => `- [ ] ${label}`);
+    if (missingImageContent) {
+      items.push("- [ ] Approve alt text/captions for each project image");
+    }
+    return `## ${toTitle(project.name)}\n\n${items.join("\n") || "- [x] Required content supplied"}`;
+  });
+
+  await ensureDir(path.dirname(CONTENT_TODO_PATH));
+  await fs.writeFile(
+    CONTENT_TODO_PATH,
+    `# Project Content TODO\n\nGenerated from verified content gaps. Empty fields are omitted from the website.\n\n${sections.join("\n\n")}\n`,
+    "utf8"
+  );
+};
+
 const main = async () => {
   await fs.rm(OUTPUT_IMAGES_ROOT, { recursive: true, force: true });
   await fs.rm(OUTPUT_LOGOS_ROOT, { recursive: true, force: true });
@@ -432,14 +482,14 @@ const main = async () => {
   const [logos, projects] = await Promise.all([prepareLogos(), prepareProjects()]);
 
   const manifest = {
-    generatedAt: new Date().toISOString(),
     logos,
     projects
   };
 
   await fs.writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n", "utf8");
+  await writeContentTodo(projects);
 
-  console.log(`Prepared ${projects.length} projects and copied responsive assets.`);
+  console.log(`Prepared ${projects.length} projects, copied responsive assets, and updated content TODOs.`);
 };
 
 main().catch((error) => {

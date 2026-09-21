@@ -2,8 +2,9 @@ export const SITE_CONFIG = {
   name: "Thuang Architect",
   shortName: "Thuang",
   description:
-    "Thuang Architect is a Medan-based architecture studio for residential and commercial projects in Medan and outside Medan, shaped by quiet luxury, proportion, and precise detailing.",
-  siteUrl: "https://www.thuangarchitect.com",
+    "Thuang Architect is an architecture studio based in Medan and Jakarta, creating thoughtful residential and commercial spaces.",
+  siteUrl: "https://thuangarchitect.com",
+  defaultSocialImage: "/images/residential/lexington/08-lxt-8-1920.webp",
   instagramUrl: "https://instagram.com/thuangarchitect",
   contactEmail: "thuangarchitect@gmail.com",
   whatsappNumber: "+62 853-5982-0664",
@@ -17,32 +18,33 @@ export const NAV_LINKS = [
 ] as const;
 
 export const ABOUT_CONTENT = {
-  intro:
-    "Thuang Architect is an architecture studio based in Medan, working on residential and commercial projects in Medan and beyond. The studio develops architecture with restrained forms, balanced light, and precise detailing, approaching every project as a timeless environment shaped by proportion rather than trend.",
-  services: [
-    "Architecture and Interior Design",
-    "Spatial Planning and Concept Development",
-    "Detailing and Material Direction",
-    "Site Supervision and Construction Coordination",
+  intro: [
+    "Thuang Architect is an architecture studio based in Medan and Jakarta, working across residential and commercial architecture.",
+    "Each project begins with a clear understanding of the client's needs, the character of the site, and the purpose of the space. We listen carefully, identify what matters most, and translate those priorities into a considered architectural response.",
+    "Our work is developed around how people will use and experience a place every day. The result is architecture that is thoughtful, functional, and connected to its setting.",
   ],
-  construction:
-    "From schematic direction to technical drawing packages, we align structure, materiality, and buildability so the final space matches the initial architectural intent.",
-  softFurnishings:
-    "Furniture, art, and decorative layers are curated to preserve visual calm while enhancing comfort and atmosphere throughout each project.",
+  services: [
+    {
+      title: "Residential Architecture",
+      description:
+        "Homes and private living spaces shaped around the needs of the people who live there and the qualities of the site.",
+    },
+    {
+      title: "Commercial Architecture",
+      description:
+        "Business and commercial spaces planned around their purpose, daily use, and the experience of the people within them.",
+    },
+  ],
 };
 
 export const MEDAN_SERVICE_CONTENT = {
   intro:
-    "Thuang Architect provides architecture and interior design services from Medan for residential and commercial projects. The studio works with clients in Medan and can support projects outside Medan through a clear design, documentation, and coordination process.",
+    "Thuang Architect provides residential and commercial architecture services in Medan.",
   approach:
-    "Each project starts with proportion, site response, daylight, circulation, material direction, and buildability. The result is architecture that feels calm, precise, and suitable for long-term use.",
+    "We develop each project around the client's needs, the site, and the intended use of the space.",
   services: [
-    "Jasa arsitek rumah tinggal di Medan",
-    "Architectural concept and spatial planning",
-    "Interior design direction and material selection",
-    "Commercial architecture for offices, retail, and hospitality",
-    "Design coordination for projects outside Medan",
+    "Residential Architecture for homes and private living spaces",
+    "Commercial Architecture for business and commercial spaces",
   ],
-  areas:
-    "Based in Medan, Thuang Architect serves projects across Medan, North Sumatra, and selected commissions outside Medan by appointment.",
+  areas: "Based in Medan and Jakarta, Thuang Architect serves projects in both cities.",
 };

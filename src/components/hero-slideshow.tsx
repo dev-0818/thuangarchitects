@@ -17,12 +17,21 @@ export const HeroSlideshow = ({
   onSlideChange
 }: HeroSlideshowProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(true);
 
   const normalizedSlides = useMemo(() => slides.filter(Boolean), [slides]);
   const normalizedMobileSlides = useMemo(() => mobilePortraitSlides.filter(Boolean), [mobilePortraitSlides]);
 
   useEffect(() => {
-    if (normalizedSlides.length <= 1) {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReduceMotion(media.matches);
+    updateMotionPreference();
+    media.addEventListener("change", updateMotionPreference);
+    return () => media.removeEventListener("change", updateMotionPreference);
+  }, []);
+
+  useEffect(() => {
+    if (normalizedSlides.length <= 1 || reduceMotion) {
       return;
     }
 
@@ -31,7 +40,7 @@ export const HeroSlideshow = ({
     }, intervalMs);
 
     return () => window.clearInterval(timer);
-  }, [intervalMs, normalizedSlides.length]);
+  }, [intervalMs, normalizedSlides.length, reduceMotion]);
 
   useEffect(() => {
     onSlideChange?.(activeIndex);
@@ -41,33 +50,29 @@ export const HeroSlideshow = ({
     return null;
   }
 
+  const activeSlide = normalizedSlides[activeIndex];
+  const mobileSlideSource =
+    activeIndex === 0
+      ? activeSlide.sources.w1200
+      : normalizedMobileSlides.length > 0
+        ? normalizedMobileSlides[activeIndex % normalizedMobileSlides.length]
+        : activeSlide.sources.w1200;
+
   return (
     <div className="home-hero-media" aria-hidden="true">
-      {normalizedSlides.map((slide, index) => {
-        const mobileSlideSource =
-          index === 0
-            ? slide.sources.w1920
-            : normalizedMobileSlides.length > 0
-            ? normalizedMobileSlides[index % normalizedMobileSlides.length]
-            : slide.sources.w1920;
-
-        return (
-          <picture
-            key={`${slide.id}-${index}`}
-            className={`home-slide ${index === activeIndex ? "is-active" : ""}`}
-          >
-            <source media="(max-width: 820px)" srcSet={mobileSlideSource} />
-            <source media="(max-width: 1280px)" srcSet={slide.sources.w1920} />
-            <img
-              src={slide.sources.w1920}
-              alt={slide.alt}
-              loading={index === 0 ? "eager" : "lazy"}
-              fetchPriority={index === 0 ? "high" : "auto"}
-              decoding="async"
-            />
-          </picture>
-        );
-      })}
+      <picture key={`${activeSlide.id}-${activeIndex}`} className="home-slide is-active">
+        <source media="(max-width: 820px)" srcSet={mobileSlideSource} />
+        <source media="(max-width: 1280px)" srcSet={activeSlide.sources.w1200} />
+        <img
+          src={activeSlide.sources.w1920}
+          alt=""
+          width={activeSlide.width}
+          height={activeSlide.height}
+          loading="eager"
+          fetchPriority={activeIndex === 0 ? "high" : "auto"}
+          decoding="async"
+        />
+      </picture>
     </div>
   );
 };

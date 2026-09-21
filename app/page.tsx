@@ -4,9 +4,10 @@ import type { ProjectImage } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "Thuang Architect | Arsitek Medan",
+  title: "Thuang Architect | Architecture Studio & Arsitek Medan",
+  absoluteTitle: true,
   description:
-    "Thuang Architect is a Medan-based architecture studio for residential and commercial projects in Medan and outside Medan, shaped by minimal forms, crafted materials, and controlled light.",
+    "Thuang Architect is an architecture studio based in Medan and Jakarta, creating thoughtful residential and commercial spaces.",
   path: "/",
   keywords: [
     "arsitek medan",
@@ -51,7 +52,7 @@ export default function HomePage() {
       (image) => image.orientation === "portrait" && !excludedHomeImages.has(image.sources.w1920)
     )
     .slice(0, 10)
-    .map((image) => image.sources.w1920);
+    .map((image) => image.sources.w1200);
 
   if (!lexingtonProject || heroSlides.length === 0) {
     return (

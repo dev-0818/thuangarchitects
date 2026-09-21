@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SectionHeading } from "@/components/section-heading";
 import { LazyProjectCard } from "@/components/lazy-project-card";
 import { getCategoryMeta, getProjectsByCategory, type ProjectCategory } from "@/lib/projects";
@@ -25,7 +26,7 @@ export default function PortfolioPage() {
         return (
           <section key={category} className="portfolio-section" aria-labelledby={`${category}-heading`}>
             <h2 id={`${category}-heading`} className="section-eyebrow">
-              {meta.label}
+              <Link href={`/portfolio/${category}/`}>{meta.title}</Link>
             </h2>
             <p>{meta.subtitle}</p>
             <div className="portfolio-grid">

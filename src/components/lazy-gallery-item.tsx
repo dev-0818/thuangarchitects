@@ -20,7 +20,7 @@ export const LazyGalleryItem = ({ image, index, eager = false }: LazyGalleryItem
     return (
         <figure
             ref={ref as unknown as React.Ref<HTMLElement>}
-            className={`project-gallery-item lazy-fade${isVisible ? " is-visible" : ""}`}
+            className={`project-gallery-item lazy-fade${eager || isVisible ? " is-visible" : ""}`}
             style={{ transitionDelay: `${index * 80}ms` }}
         >
             <ResponsiveImage
@@ -29,6 +29,12 @@ export const LazyGalleryItem = ({ image, index, eager = false }: LazyGalleryItem
                 className="project-gallery-image"
                 sizes="(max-width: 1024px) 92vw, 62vw"
             />
+            {image.caption || image.credit ? (
+                <figcaption>
+                    {image.caption}
+                    {image.credit ? <span> — {image.credit}</span> : null}
+                </figcaption>
+            ) : null}
         </figure>
     );
 };

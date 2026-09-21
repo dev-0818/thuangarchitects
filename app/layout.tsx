@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Convergence } from "next/font/google";
 import { BrandMark } from "@/components/brand-mark";
+import { JsonLd } from "@/components/json-ld";
 import { SiteNav } from "@/components/site-nav";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { SITE_CONFIG } from "@/lib/content";
@@ -15,9 +16,10 @@ const convergence = Convergence({
 });
 
 const baseMetadata = buildMetadata({
-  title: `${SITE_CONFIG.name} | Arsitek Medan`,
+  title: `${SITE_CONFIG.name} | Architecture Studio & Arsitek Medan`,
   description: SITE_CONFIG.description,
   path: "/",
+  absoluteTitle: true,
   keywords: [
     "arsitek medan",
     "architect medan",
@@ -31,8 +33,8 @@ const baseMetadata = buildMetadata({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.siteUrl),
   title: {
-    default: SITE_CONFIG.name,
-    template: `%s | ${SITE_CONFIG.shortName}`
+    default: `${SITE_CONFIG.name} | Architecture Studio & Arsitek Medan`,
+    template: `%s | ${SITE_CONFIG.name}`
   },
   icons: {
     icon: "/favicon.png",
@@ -76,7 +78,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </header>
           <main id="content">{children}</main>
         </div>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} />
+        <JsonLd data={siteJsonLd} />
       </body>
     </html>
   );

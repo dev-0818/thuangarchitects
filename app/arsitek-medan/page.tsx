@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { JsonLd } from "@/components/json-ld";
 import { SectionHeading } from "@/components/section-heading";
 import { MEDAN_SERVICE_CONTENT } from "@/lib/content";
 import { arsitekMedanPageJsonLd, buildMetadata } from "@/lib/seo";
@@ -5,7 +7,7 @@ import { arsitekMedanPageJsonLd, buildMetadata } from "@/lib/seo";
 export const metadata = buildMetadata({
   title: "Arsitek Medan",
   description:
-    "Jasa arsitek Medan untuk rumah tinggal, bangunan komersial, dan interior. Thuang Architect berbasis di Medan dan dapat menangani proyek di luar Medan.",
+    "Residential and commercial architecture services in Medan by Thuang Architect.",
   path: "/arsitek-medan/",
   keywords: [
     "arsitek medan",
@@ -13,7 +15,6 @@ export const metadata = buildMetadata({
     "jasa arsitek medan",
     "arsitek rumah medan",
     "desain rumah medan",
-    "interior design medan",
     "commercial architect medan"
   ]
 });
@@ -56,10 +57,17 @@ export default function ArsitekMedanPage() {
             <h2 className="section-eyebrow">Scope</h2>
             <p>{MEDAN_SERVICE_CONTENT.approach}</p>
             <p>{MEDAN_SERVICE_CONTENT.areas}</p>
+            <nav className="context-links" aria-label="Related pages">
+              <Link href="/portfolio/">Portfolio</Link>
+              <Link href="/portfolio/residential/">Residential</Link>
+              <Link href="/portfolio/komersial/">Commercial</Link>
+              <Link href="/about/">About</Link>
+              <Link href="/contact/">Contact</Link>
+            </nav>
           </article>
         </div>
       </section>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(arsitekMedanPageJsonLd) }} />
+      <JsonLd data={arsitekMedanPageJsonLd} />
     </div>
   );
 }

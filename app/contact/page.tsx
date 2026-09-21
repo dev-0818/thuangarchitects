@@ -14,8 +14,8 @@ export default function ContactPage() {
       <SectionHeading eyebrow="Connect" title="Contact" />
       <section className="simple-section">
         <p>
-          For project inquiries and collaborations, contact us directly using the
-          details below.
+          Thuang Architect is based in Medan and Jakarta, Indonesia. For project inquiries and
+          collaborations, contact the studio directly using the details below.
         </p>
 
         <div className="contact-card">

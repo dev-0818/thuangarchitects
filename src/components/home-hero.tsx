@@ -23,11 +23,18 @@ export const HomeHero = ({
     <section className="home-hero" aria-label="Featured project">
       <HeroSlideshow slides={slides} mobilePortraitSlides={mobilePortraitSlides} />
       <div className="home-overlay">
-        <img src={homeLogo} alt="Thuang Architect" className="home-brand-logo" />
-        <p>
-          Minimalist architecture for private and commercial spaces, balancing proportion,
-          material integrity, and timeless calm.
-        </p>
+        <img
+          src={homeLogo}
+          alt="Thuang Architect"
+          width="3842"
+          height="233"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="home-brand-logo"
+        />
+        <h1>Architecture Studio in Medan and Jakarta</h1>
+        <p>We create thoughtful residential and commercial spaces.</p>
         <div className="home-actions">
           <Link className="button-link" href="/portfolio/">
             Explore Portfolio

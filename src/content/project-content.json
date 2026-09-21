@@ -1,0 +1,33 @@
+{
+  "komersial/brastagi": {},
+  "komersial/cakalang": {},
+  "komersial/cbd-polonia": {},
+  "komersial/gudang-mmtc": {},
+  "komersial/kalimantan-sampit": {},
+  "komersial/mangkubumi-manado": {},
+  "komersial/multatuli": {},
+  "komersial/shemade": {},
+  "residential/cemara-hijau": {},
+  "residential/de-cassa-villa": {},
+  "residential/gg-rukun": {},
+  "residential/lexington": {
+    "projectType": "Residential",
+    "location": "Lexington Tower, Podomoro Apartment, Kesawan, Medan Barat",
+    "city": "Medan",
+    "province": "Sumatra Utara",
+    "country": "Indonesia",
+    "year": 2023,
+    "status": "Done",
+    "designStyle": "Minimalist Modern",
+    "client": "Mr. F",
+    "interiorDesign": "Thuang Architect",
+    "shortDescription": "The client was detail-oriented across several aspects of the project, from the blacklist and spatial requirements to the materials."
+  },
+  "residential/maldives-citraland": {},
+  "residential/metal-raya": {},
+  "residential/rochester-citraland": {},
+  "residential/royal-sumatra": {},
+  "residential/sari-mas": {},
+  "residential/setia-jadi": {},
+  "residential/tembakau-deli": {}
+}

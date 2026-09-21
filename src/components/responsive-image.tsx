@@ -19,6 +19,8 @@ export const ResponsiveImage = ({
     <img
       src={image.sources.w1920}
       alt={image.alt}
+      width={image.width}
+      height={image.height}
       sizes={sizes}
       loading={eager ? "eager" : "lazy"}
       fetchPriority={eager ? "high" : "auto"}
